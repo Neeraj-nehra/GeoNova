@@ -61,7 +61,7 @@ export default function Home() {
               Predicting the Unstable Earth
             </h1>
             <p className="mt-4 max-w-2xl mx-auto text-lg text-white/80 animate-fade-in-up animation-delay-300">
-              Harnessing AI to forecast and mitigate landslide risks, protecting communities in the Uttarakhand region.
+              Forecasting and mitigating landslide risks to protect communities in the Uttarakhand region.
             </p>
             <div className="mt-8 animate-fade-in-up animation-delay-600">
               <Button asChild size="lg" className="rounded-full shadow-lg transition-transform transform hover:scale-105 active:scale-95 bg-primary text-primary-foreground hover:bg-primary/90">
