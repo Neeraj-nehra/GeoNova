@@ -96,9 +96,9 @@ export default function Home() {
         </section>
         
         {/* About Section */}
-        <section id="about" className="py-20 bg-black dark:bg-transparent">
+        <section id="about" className="py-20 bg-black text-white">
             <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
-                <div className="bg-card border rounded-2xl p-8 h-80 flex flex-col justify-center">
+                <div className="glass-card p-8 rounded-2xl h-80 flex flex-col justify-center">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
                     <p className="text-sm text-muted-foreground">
                         GeoNova Landslide Guardian is a data-driven application built to monitor, assess, and reduce the risks of landslides, with a focus on the vulnerable terrain of Uttarakhand, India. It empowers local residents, policymakers, and researchers to stay informed and make proactive safety decisions.
