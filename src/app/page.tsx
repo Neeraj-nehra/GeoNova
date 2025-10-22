@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mountain, Map, ShieldCheck, Siren, Send, Twitter, Github, Linkedin } from "lucide-react";
+import { Mountain, Map, ShieldCheck, Siren, Send, Twitter, Github, Linkedin, MoveDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -32,7 +32,7 @@ const features = [
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="p-4 sm:p-6 sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
+      <header className="p-4 sm:p-6 sticky top-0 z-50 w-full bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto flex justify-between items-center">
            <Link href="/" className="flex items-center gap-2 text-foreground">
             <div className="bg-primary/10 p-2 rounded-lg border border-primary/20">
@@ -56,25 +56,26 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 overflow-hidden text-white">
-           <Image
-            src="https://picsum.photos/seed/hero-bg/1920/1080"
-            alt="Lush green mountains"
-            fill
-            className="object-cover -z-10"
-            data-ai-hint="mountain landscape"
-          />
-          <div className="absolute inset-0 bg-black/40 -z-10"></div>
-          <h1 className="text-4xl md:text-7xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up">
-            Guardians of the Slopes
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-200 animate-fade-in-up animation-delay-300">
-            Leveraging AI and real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
-          </p>
-          <div className="mt-8 animate-fade-in-up animation-delay-600">
-            <Button asChild size="lg" className="rounded-full shadow-lg transition-transform transform hover:scale-105 active:scale-95">
-              <Link href="/login">Get Started</Link>
-            </Button>
+        <section className="relative flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div className="w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse animation-delay-300"></div>
+          </div>
+          <div className="relative z-10">
+            <h1 className="text-4xl md:text-7xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up gradient-text">
+              Guardians of the Slopes
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg text-muted-foreground animate-fade-in-up animation-delay-300">
+              Leveraging AI and real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
+            </p>
+            <div className="mt-8 animate-fade-in-up animation-delay-600">
+              <Button asChild size="lg" className="rounded-full shadow-lg transition-transform transform hover:scale-105 active:scale-95">
+                <Link href="/login">Get Started</Link>
+              </Button>
+            </div>
+             <div className="absolute bottom-[-8rem] left-1/2 -translate-x-1/2 animate-bounce mt-8">
+              <MoveDown className="h-6 w-6 text-muted-foreground" />
+            </div>
           </div>
         </section>
 
