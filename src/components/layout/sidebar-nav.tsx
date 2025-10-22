@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -89,31 +90,48 @@ export function SidebarNav() {
                 </Link>
               </SidebarMenuItem>
             ))}
+             <SidebarMenuItem>
+                <Link href="/dashboard/settings" passHref>
+                  <SidebarMenuButton
+                    as="a"
+                    isActive={pathname === "/dashboard/settings"}
+                    className={cn(
+                        "data-[active=true]:bg-white/10 data-[active=true]:text-white hover:bg-white/5",
+                        "text-sidebar-foreground hover:text-white"
+                    )}
+                  >
+                    <Settings className="h-5 w-5" />
+                    <span>Settings</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarSeparator className="my-0 bg-sidebar-border/50" />
         <SidebarFooter className="p-4">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={user?.photoURL ?? `https://picsum.photos/seed/avatar/100/100`} />
-              <AvatarFallback>
-                <UserCircle />
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-semibold text-white truncate">{user?.displayName || 'User'}</p>
-              <p className="text-xs text-emerald-200 truncate">{user?.email || 'No email'}</p>
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard/settings" className="flex items-center gap-3 flex-1 overflow-hidden">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={user?.photoURL ?? `https://picsum.photos/seed/avatar/100/100`} />
+                  <AvatarFallback>
+                    <UserCircle />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 overflow-hidden">
+                  <p className="text-sm font-semibold text-white truncate">{user?.displayName || 'User'}</p>
+                  <p className="text-xs text-emerald-200 truncate">{user?.email || 'No email'}</p>
+                </div>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-emerald-200 hover:text-white hover:bg-white/10"
+                onClick={handleLogout}
+                aria-label="Log out"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-emerald-200 hover:text-white hover:bg-white/10"
-              onClick={handleLogout}
-              aria-label="Log out"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
         </SidebarFooter>
       </div>
     </Sidebar>
