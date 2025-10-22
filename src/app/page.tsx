@@ -1,16 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { BarChart, Map, MoveDown, Mountain, Siren } from "lucide-react";
+import { BarChart, Map, MoveDown, Mountain, Siren, FileText, Users, Mail, Twitter, Linkedin, Github } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 const features = [
   {
@@ -45,24 +37,9 @@ export default function Home() {
                 <span className="text-2xl font-bold font-headline text-white">GeoNova</span>
               </Link>
               <nav className="flex items-center gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">About</Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>About GeoNova</DialogTitle>
-                      <DialogDescription>
-                        Your companion in navigating and mitigating landslide threats.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="py-4 text-sm text-muted-foreground">
-                      <p>
-                        GeoNova Landslide Guardian is an intelligent, data-driven application built to monitor, assess, and reduce the risks of landslides—specifically focused on the vulnerable terrain of Uttarakhand, India. By combining real-time data analysis with advanced AI models, the platform empowers users to stay informed and make proactive decisions. Whether you're a local resident, a policymaker, or a researcher, GeoNova offers critical tools such as GPS-based risk assessments, an interactive susceptibility map, early warning systems, and crowdsourced reporting features. It also includes an AI-generated news feed, and a comprehensive dashboard filled with live statistics on vegetation, rainfall, and historical alerts. Designed for both awareness and action, GeoNova Landslide Guardian is your companion in navigating and mitigating landslide threats.
-                      </p>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
+                  <a href="#about">About</a>
+                </Button>
 
                 <Button asChild variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                     <Link href="/login">Login</Link>
@@ -93,14 +70,16 @@ export default function Home() {
               </Button>
             </div>
              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce mt-8">
-              <MoveDown className="h-8 w-8 text-muted-foreground/70" />
+              <a href="#features" aria-label="Scroll to features">
+                <MoveDown className="h-8 w-8 text-muted-foreground/70" />
+              </a>
             </div>
           </div>
         </section>
 
         {/* Features Section */}
         <section id="features" className="py-20 bg-background">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 animate-fade-in-up">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline">Key Features</h2>
                     <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Our platform provides a comprehensive suite of tools to monitor and mitigate landslide risks.</p>
@@ -118,13 +97,54 @@ export default function Home() {
                 </div>
             </div>
         </section>
+        
+        {/* About Section */}
+        <section id="about" className="py-20 bg-card border-y">
+            <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
+                <div>
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
+                    <div className="space-y-4 text-muted-foreground">
+                        <p>
+                            GeoNova Landslide Guardian is an intelligent, data-driven application built to monitor, assess, and reduce the risks of landslides—specifically focused on the vulnerable terrain of Uttarakhand, India.
+                        </p>
+                        <p>
+                            By combining real-time data analysis with advanced AI models, the platform empowers users to stay informed and make proactive decisions. Whether you're a local resident, a policymaker, or a researcher, GeoNova offers critical tools such as GPS-based risk assessments, an interactive susceptibility map, early warning systems, and crowdsourced reporting features.
+                        </p>
+                         <p>
+                            It also includes an AI-generated news feed, and a comprehensive dashboard filled with live statistics on vegetation, rainfall, and historical alerts. Designed for both awareness and action, GeoNova Landslide Guardian is your companion in navigating and mitigating landslide threats.
+                        </p>
+                    </div>
+                </div>
+                <div className="relative h-80 rounded-lg overflow-hidden shadow-xl">
+                   <Image
+                    src="https://picsum.photos/seed/map-image/800/600"
+                    alt="Map of Uttarakhand"
+                    fill
+                    className="object-cover"
+                    data-ai-hint="satellite map"
+                    />
+                </div>
+            </div>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border/50 py-8">
-          <div className="container mx-auto px-4 text-center text-muted-foreground">
-              <p className="mb-2">Built by the GeoNova Team</p>
-              <p className="text-sm">&copy; {new Date().getFullYear()} GeoNova. All rights reserved.</p>
+      <footer id="contact" className="bg-background border-t border-border/50 py-12">
+          <div className="container mx-auto px-4 text-center">
+            <div className="flex justify-center items-center gap-2 mb-4">
+              <Mountain className="h-6 w-6 text-primary" />
+              <h3 className="text-2xl font-bold font-headline">GeoNova</h3>
+            </div>
+            <p className="max-w-xl mx-auto text-muted-foreground mb-8">
+              Stay connected with our mission to safeguard communities through technology and data.
+            </p>
+            <div className="flex justify-center gap-6 mb-8">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Twitter className="h-6 w-6" /></a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="h-6 w-6" /></a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Github className="h-6 w-6" /></a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Mail className="h-6 w-6" /></a>
+            </div>
+            <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} GeoNova. All rights reserved. Built by the GeoNova Team.</p>
           </div>
       </footer>
     </div>

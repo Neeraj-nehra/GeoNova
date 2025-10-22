@@ -71,6 +71,10 @@
     --sidebar-border: 175 57% 25%;
     --sidebar-ring: 160 70% 40%;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @layer base {
