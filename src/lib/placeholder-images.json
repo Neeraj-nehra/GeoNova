@@ -1,10 +1,3 @@
 {
-  "placeholderImages": [
-    {
-      "id": "susceptibility-map",
-      "description": "A placeholder image for the landslide susceptibility map.",
-      "imageUrl": "https://images.unsplash.com/photo-1672305815743-633e68ce66dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtYXAlMjBzYXRlbGxpdGV8ZW58MHx8fHwxNzYxMTE3NjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "map satellite"
-    }
-  ]
+  "placeholderImages": []
 }
