@@ -66,18 +66,19 @@ export function SidebarNav() {
           <SidebarMenu>
             {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href} legacyBehavior passHref>
-                  <SidebarMenuButton
-                    isActive={pathname === item.href}
-                    className={cn(
-                        "data-[active=true]:bg-white/10 data-[active=true]:text-white hover:bg-white/5",
-                        "text-sidebar-foreground hover:text-white"
-                    )}
-                  >
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === item.href}
+                  className={cn(
+                      "data-[active=true]:bg-white/10 data-[active=true]:text-white hover:bg-white/5",
+                      "text-sidebar-foreground hover:text-white"
+                  )}
+                >
+                  <Link href={item.href}>
                     <item.icon className="h-5 w-5" />
                     <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </Link>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
