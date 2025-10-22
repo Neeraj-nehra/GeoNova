@@ -12,7 +12,8 @@ import {z} from 'genkit';
 const NewsArticleSchema = z.object({
   title: z.string().describe('The headline of the news article.'),
   source: z.string().describe('The news source, e.g., "Times of India".'),
-  summary: z.string().describe('A brief summary of the news article.'),
+  summary: z.string().describe('A brief summary of the news article (1-2 sentences).'),
+  body: z.string().describe('The full content of the news article (3-4 paragraphs).'),
   publishedAt: z.string().describe('How long ago the article was published, e.g., "2 hours ago", "1 day ago".'),
   imageUrl: z.string().url().describe('A relevant image URL for the article.'),
   url: z.string().url().describe('The URL to the full article.'),
@@ -23,6 +24,8 @@ const LandslideNewsOutputSchema = z.object({
 });
 
 export type LandslideNewsOutput = z.infer<typeof LandslideNewsOutputSchema>;
+export type NewsArticle = z.infer<typeof NewsArticleSchema>;
+
 
 export async function getLandslideNews(): Promise<LandslideNewsOutput> {
   return getLandslideNewsFlow();
@@ -31,12 +34,13 @@ export async function getLandslideNews(): Promise<LandslideNewsOutput> {
 const prompt = ai.definePrompt({
   name: 'landslideNewsPrompt',
   output: {schema: LandslideNewsOutputSchema},
-  prompt: `You are a news aggregator specializing in geological events. Generate a list of 5 recent, realistic but fictional news headlines and summaries about landslide events or risks in the Uttarakhand region of India.
+  prompt: `You are a news aggregator specializing in geological events. Generate a list of 5 recent, realistic but fictional news articles about landslide events or risks in the Uttarakhand region of India.
 
 For each article, provide:
 - A compelling title.
 - A plausible news source (e.g., "Times of India", "Hindustan Times", "Local Press").
 - A concise summary (1-2 sentences).
+- A full article body (3-4 paragraphs), written in a journalistic style.
 - A relative published time (e.g., "3 hours ago", "1 day ago").
 - A relevant placeholder image URL from 'https://picsum.photos/seed/{seed}/600/400' where {seed} is a random number.
 - A valid, placeholder URL for the article link (e.g., "https://example.com/news/123").
