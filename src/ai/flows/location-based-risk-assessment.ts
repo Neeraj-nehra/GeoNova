@@ -8,7 +8,7 @@
  * - LocationBasedRiskAssessmentOutput - The return type for the assessLandslideRisk function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from 'genkit';
 import {z} from 'genkit';
 
 const LocationBasedRiskAssessmentInputSchema = z.object({
@@ -27,7 +27,7 @@ export async function assessLandslideRisk(input: LocationBasedRiskAssessmentInpu
   return locationBasedRiskAssessmentFlow(input);
 }
 
-const prompt = ai.definePrompt({
+const prompt = ai.prompt({
   name: 'locationBasedRiskAssessmentPrompt',
   input: {schema: LocationBasedRiskAssessmentInputSchema},
   output: {schema: LocationBasedRiskAssessmentOutputSchema},
@@ -46,7 +46,7 @@ Risk Level:
 Analysis: `,
 });
 
-const locationBasedRiskAssessmentFlow = ai.defineFlow(
+const locationBasedRiskAssessmentFlow = ai.flow(
   {
     name: 'locationBasedRiskAssessmentFlow',
     inputSchema: LocationBasedRiskAssessmentInputSchema,

@@ -53,7 +53,7 @@ export function PageHeader({ title, showRefresh = false }: PageHeaderProps) {
             ))}
           </BreadcrumbList>
         </Breadcrumb>
-        <h1 className="text-3xl font-bold font-headline mt-2 text-gray-800">{title}</h1>
+        <h1 className="text-3xl font-bold font-headline mt-2">{title}</h1>
       </div>
       {showRefresh && (
         <Button variant="outline" onClick={handleRefresh}>

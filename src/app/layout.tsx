@@ -36,10 +36,10 @@ export default function RootLayout({
           crossOrigin=""/>
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-body antialiased h-full`}>
-        <FirebaseClientProvider>
-          {children}
-        </FirebaseClientProvider>
-        <Toaster />
+          <FirebaseClientProvider>
+            {children}
+          </FirebaseClientProvider>
+          <Toaster />
       </body>
     </html>
   );

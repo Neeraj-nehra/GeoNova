@@ -11,12 +11,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { User as UserIcon, Bell, Database, Cog, Loader2 } from "lucide-react";
-import { useUser } from "@/firebase";
-import { useEffect } from "react";
+import { User as UserIcon, Bell, Database, Cog, Loader2, UploadCloud } from "lucide-react";
+import { useStorage, useUser } from "@/firebase";
+import { useEffect, useRef, useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { updateProfile } from "firebase/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const profileFormSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -27,8 +29,12 @@ type ProfileFormData = z.infer<typeof profileFormSchema>;
 
 export default function SettingsPage() {
   const { user, isUserLoading } = useUser();
+  const storage = useStorage();
   const { toast } = useToast();
   
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
@@ -63,6 +69,35 @@ export default function SettingsPage() {
       });
     }
   };
+  
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user || !storage) return;
+
+    setIsUploading(true);
+    try {
+      const storageRef = ref(storage, `avatars/${user.uid}/${file.name}`);
+      const uploadResult = await uploadBytes(storageRef, file);
+      const photoURL = await getDownloadURL(uploadResult.ref);
+      await updateProfile(user, { photoURL });
+      toast({
+        title: "Avatar Updated",
+        description: "Your new profile picture has been saved.",
+      });
+    } catch(error: any) {
+       toast({
+        variant: "destructive",
+        title: "Upload Failed",
+        description: error.message,
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
 
   return (
@@ -77,7 +112,35 @@ export default function SettingsPage() {
           </div>
           <CardDescription>Manage your personal information and password.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={user?.photoURL ?? undefined} />
+                <AvatarFallback>
+                  <UserIcon className="h-10 w-10" />
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                size="icon"
+                className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full"
+                onClick={handleAvatarClick}
+                disabled={isUploading}
+              >
+                {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                <span className="sr-only">Upload new avatar</span>
+              </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                accept="image/png, image/jpeg"
+              />
+            </div>
+             <p className="text-sm text-muted-foreground">Click the icon to upload a new avatar. <br/>Recommended size: 200x200px</p>
+          </div>
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onProfileUpdate)} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -174,10 +237,6 @@ export default function SettingsPage() {
             <CardDescription>Customize your dashboard experience.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="theme">Theme</Label>
-              <p className="text-sm text-muted-foreground">Light (System Default)</p>
-            </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="language">Language</Label>
               <p className="text-sm text-muted-foreground">English</p>

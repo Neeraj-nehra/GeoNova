@@ -6,7 +6,7 @@
  * - LandslideNewsOutput - The return type for the getLandslideNews function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from 'genkit';
 import {z} from 'genkit';
 
 const NewsArticleSchema = z.object({
@@ -31,7 +31,7 @@ export async function getLandslideNews(): Promise<LandslideNewsOutput> {
   return getLandslideNewsFlow();
 }
 
-const prompt = ai.definePrompt({
+const prompt = ai.prompt({
   name: 'landslideNewsPrompt',
   output: {schema: LandslideNewsOutputSchema},
   prompt: `You are a news editor for a major publication, tasked with creating a news feed about landslide activity in the Uttarakhand region of India. Generate a list of 5 recent, realistic but fictional news articles.
@@ -48,7 +48,7 @@ For each article, provide the following in a journalistic style:
 Ensure the stories are varied and feel authentic, covering different locations within Uttarakhand and different aspects of the landslide issue (e.g., recent events, government response, scientific analysis, human impact).`,
 });
 
-const getLandslideNewsFlow = ai.defineFlow(
+const getLandslideNewsFlow = ai.flow(
   {
     name: 'getLandslideNewsFlow',
     outputSchema: LandslideNewsOutputSchema,

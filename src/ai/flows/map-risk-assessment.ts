@@ -8,7 +8,7 @@
  * - MapRiskAssessmentOutput - The return type for the assessMapRisk function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from 'genkit';
 import {z} from 'genkit';
 
 const MapRiskAssessmentInputSchema = z.object({
@@ -27,7 +27,7 @@ export async function assessMapRisk(input: MapRiskAssessmentInput): Promise<MapR
   return mapRiskAssessmentFlow(input);
 }
 
-const prompt = ai.definePrompt({
+const prompt = ai.prompt({
   name: 'mapRiskAssessmentPrompt',
   input: {schema: MapRiskAssessmentInputSchema},
   output: {schema: MapRiskAssessmentOutputSchema},
@@ -45,7 +45,7 @@ Example Output:
 `,
 });
 
-const mapRiskAssessmentFlow = ai.defineFlow(
+const mapRiskAssessmentFlow = ai.flow(
   {
     name: 'mapRiskAssessmentFlow',
     inputSchema: MapRiskAssessmentInputSchema,

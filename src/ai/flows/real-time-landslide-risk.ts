@@ -7,7 +7,7 @@
  * - LandslideRiskOutput - The return type for the assessLandslideRisk function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from 'genkit';
 import {z} from 'genkit';
 
 const LandslideRiskInputSchema = z.object({
@@ -27,7 +27,7 @@ export async function assessLandslideRisk(input: LandslideRiskInput): Promise<La
   return assessLandslideRiskFlow(input);
 }
 
-const assessLandslideRiskPrompt = ai.definePrompt({
+const assessLandslideRiskPrompt = ai.prompt({
   name: 'assessLandslideRiskPrompt',
   input: {schema: LandslideRiskInputSchema},
   output: {schema: LandslideRiskOutputSchema},
@@ -50,7 +50,7 @@ Ensure that the assessment is clear, concise, and actionable for users seeking t
 Output in JSON format.`, // Ensure output is in JSON format for structured parsing
 });
 
-const assessLandslideRiskFlow = ai.defineFlow(
+const assessLandslideRiskFlow = ai.flow(
   {
     name: 'assessLandslideRiskFlow',
     inputSchema: LandslideRiskInputSchema,

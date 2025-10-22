@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { BarChart, Map, Mountain, Siren, FileText, Users, Mail, Twitter, Linkedin, Github, MoveDown } from "lucide-react";
+import { BarChart, Map, Mountain, Siren, FileText, Users, Mail, Linkedin, MoveDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -25,7 +25,7 @@ const features = [
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-black text-foreground">
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative flex flex-col items-center justify-center text-center h-screen overflow-hidden">
@@ -36,7 +36,7 @@ export default function Home() {
             className="object-cover -z-10"
             data-ai-hint="green mountains"
           />
-          <div className="absolute inset-0 bg-black/30 -z-10"></div>
+          <div className="absolute inset-0 bg-black/60 -z-10"></div>
           
           <header className="absolute top-0 w-full p-4 sm:p-6 z-50">
             <div className="container mx-auto flex justify-between items-center">
@@ -57,7 +57,7 @@ export default function Home() {
           </header>
           
           <div className="relative z-10 px-4">
-            <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-white to-neutral-400 bg-clip-text text-transparent">
               Predicting the Unstable Earth
             </h1>
             <p className="mt-4 max-w-2xl mx-auto text-lg text-white/80 animate-fade-in-up animation-delay-300 text-center">
@@ -75,20 +75,20 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 bg-transparent">
+        <section id="features" className="py-20 bg-black dark:bg-transparent">
             <div className="container mx-auto px-4 animate-fade-in-up">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline text-white">Key Features</h2>
-                    <p className="text-white/70 mt-2 max-w-2xl mx-auto">Our platform provides a comprehensive suite of tools to monitor and mitigate landslide risks.</p>
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline">Key Features</h2>
+                    <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Our platform provides a comprehensive suite of tools to monitor and mitigate landslide risks.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {features.map((feature, index) => (
-                        <div key={index} className="text-center p-8 rounded-2xl glass-card text-white">
+                        <div key={index} className="text-center p-8 rounded-2xl bg-card border">
                             <div className="flex justify-center mb-4">
                                 {feature.icon}
                             </div>
                             <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                            <p className="text-white/80">{feature.description}</p>
+                            <p className="text-muted-foreground">{feature.description}</p>
                         </div>
                     ))}
                 </div>
@@ -96,21 +96,21 @@ export default function Home() {
         </section>
         
         {/* About Section */}
-        <section id="about" className="py-20 bg-transparent">
+        <section id="about" className="py-20 bg-black dark:bg-transparent">
             <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
-                <div className="glass-card rounded-2xl p-8 text-white h-80 flex flex-col justify-center">
+                <div className="bg-card border rounded-2xl p-8 h-80 flex flex-col justify-center">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
-                    <p className="text-sm text-white/80">
+                    <p className="text-sm text-muted-foreground">
                         GeoNova Landslide Guardian is a data-driven application built to monitor, assess, and reduce the risks of landslides, with a focus on the vulnerable terrain of Uttarakhand, India. It empowers local residents, policymakers, and researchers to stay informed and make proactive safety decisions.
                     </p>
                 </div>
                 <div className="relative h-80 rounded-lg overflow-hidden shadow-xl">
                    <Image
-                    src="https://picsum.photos/seed/landslide/800/600"
+                    src="https://picsum.photos/seed/geology-team/800/600"
                     alt="Image of a landslide"
                     fill
                     className="object-cover"
-                    data-ai-hint="landslide"
+                    data-ai-hint="geology team"
                     />
                 </div>
             </div>
@@ -118,8 +118,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer id="contact" className="bg-background/80 backdrop-blur-sm border-t border-border/50 py-12">
-          <div className="container mx-auto px-4 text-center">
+      <footer id="contact" className="bg-muted/50 border-t">
+          <div className="container mx-auto px-4 py-12 text-center">
             <div className="flex justify-center items-center gap-2">
               <Mountain className="h-6 w-6 text-primary" />
               <h3 className="text-2xl font-bold font-headline">GeoNova</h3>
