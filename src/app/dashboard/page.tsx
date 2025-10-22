@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,6 +7,15 @@ import { NdviTrendChart, RecentRainfallChart, SlopeDistributionChart } from "@/c
 import { RecentAlertsTable } from "@/components/dashboard/recent-alerts-table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AreaChart, Circle, Leaf, Send, ShieldAlert, type LucideIcon } from "lucide-react";
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, where, Timestamp } from 'firebase/firestore';
+import { WithId } from '@/firebase/firestore/use-collection';
+
+type AlertData = {
+  zoneId: string;
+  risk: string;
+  createdAt: Timestamp;
+};
 
 type StatCardData = {
     title: string;
@@ -20,15 +28,15 @@ type StatCardData = {
 const initialStats: StatCardData[] = [
     {
         title: "High-Risk Zones",
-        value: "14",
-        trend: "+5.2%",
+        value: "0",
+        trend: "+0.0%",
         icon: ShieldAlert,
         color: "from-red-500 to-orange-500"
     },
     {
         title: "Alerts Sent (24h)",
-        value: "3",
-        trend: "-1.8%",
+        value: "0",
+        trend: "+0.0%",
         icon: Send,
         color: "from-blue-500 to-cyan-500"
     },
@@ -41,49 +49,38 @@ const initialStats: StatCardData[] = [
     },
     {
         title: "Monitored Areas",
-        value: "56",
-        trend: "+10",
+        value: "0",
+        trend: "+0",
         icon: AreaChart,
         color: "from-purple-500 to-pink-500"
     }
 ];
 
 export default function DashboardPage() {
+    const firestore = useFirestore();
+    const alertsQuery = useMemoFirebase(() => firestore ? collection(firestore, 'alerts') : null, [firestore]);
+    const { data: alerts, isLoading } = useCollection<AlertData>(alertsQuery);
+    
     const [statsCards, setStatsCards] = useState<StatCardData[]>(initialStats);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setStatsCards(prevStats => 
-                prevStats.map(stat => {
-                    let newValue: number;
-                    let newTrend: string;
+        if (alerts) {
+            const highRiskZones = alerts.filter(alert => alert.risk === 'High').length;
+            
+            const twentyFourHoursAgo = Timestamp.now().seconds - 24 * 60 * 60;
+            const recentAlerts = alerts.filter(alert => alert.createdAt.seconds > twentyFourHoursAgo).length;
+            
+            const monitoredAreas = new Set(alerts.map(alert => alert.zoneId)).size;
 
-                    switch (stat.title) {
-                        case "High-Risk Zones":
-                            newValue = Math.max(10, parseInt(stat.value) + Math.floor(Math.random() * 3) - 1);
-                            newTrend = `${(newValue - parseInt(initialStats[0].value)) >= 0 ? '+' : ''}${(newValue - parseInt(initialStats[0].value)).toFixed(1)}%`;
-                            return { ...stat, value: newValue.toString(), trend: newTrend };
-                        case "Alerts Sent (24h)":
-                            newValue = Math.max(0, parseInt(stat.value) + (Math.random() > 0.8 ? 1 : 0));
-                             newTrend = `${(newValue - parseInt(initialStats[1].value)) >= 0 ? '+' : ''}${(newValue - parseInt(initialStats[1].value)).toFixed(1)}%`;
-                            return { ...stat, value: newValue.toString(), trend: newTrend };
-                        case "NDVI Trend":
-                            newValue = Math.min(100, Math.max(50, parseFloat(stat.value) + (Math.random() * 0.5 - 0.25)));
-                            newTrend = `${(newValue - parseFloat(initialStats[2].value)) >= 0 ? '+' : ''}${(newValue - parseFloat(initialStats[2].value)).toFixed(1)}%`;
-                            return { ...stat, value: `${newValue.toFixed(2)}%`, trend: newTrend };
-                        case "Monitored Areas":
-                            newValue = parseInt(stat.value);
-                             newTrend = `+${(newValue - parseInt(initialStats[3].value))}`;
-                            return { ...stat, value: newValue.toString(), trend: newTrend };
-                        default:
-                            return stat;
-                    }
-                })
-            );
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
+            setStatsCards(prevStats => [
+                { ...prevStats[0], value: highRiskZones.toString(), trend: "" },
+                { ...prevStats[1], value: recentAlerts.toString(), trend: "" },
+                // NDVI trend is static for now
+                { ...prevStats[2], value: "78%", trend: "+2.1%" },
+                { ...prevStats[3], value: monitoredAreas.toString(), trend: "" },
+            ]);
+        }
+    }, [alerts]);
 
     return (
         <div className="animate-fade-in-up">
@@ -108,6 +105,7 @@ export default function DashboardPage() {
                         trend={card.trend}
                         icon={card.icon}
                         color={card.color}
+                        isLoading={isLoading}
                     />
                 ))}
             </div>
@@ -118,7 +116,7 @@ export default function DashboardPage() {
             </div>
             
             <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-                <RecentAlertsTable />
+                <RecentAlertsTable alerts={alerts as WithId<AlertData>[] | null} isLoading={isLoading} />
                 <SlopeDistributionChart />
             </div>
         </div>

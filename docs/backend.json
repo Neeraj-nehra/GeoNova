@@ -335,18 +335,14 @@
         }
       },
       {
-        "path": "/zones/{zoneId}/alerts/{alertId}",
+        "path": "/alerts/{alertId}",
         "definition": {
           "entityName": "Alert",
           "schema": {
             "$ref": "#/backend/entities/Alert"
           },
-          "description": "Stores alerts associated with specific zones. Includes denormalized risk levels from the zone for authorization independence.",
+          "description": "Stores alerts. Includes denormalized risk levels for authorization independence.",
           "params": [
-            {
-              "name": "zoneId",
-              "description": "The unique identifier for the zone."
-            },
             {
               "name": "alertId",
               "description": "The unique identifier for the alert."
@@ -371,6 +367,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to ensure authorization independence, clarity, and scalability for the GeoNova Landslide Guardian system.  Authorization Independence is achieved by denormalizing relevant authorization data (such as user roles or membership) into the documents where it's needed. This eliminates the need for `get()` calls in security rules, allowing for atomic operations and improved performance.\n\n**Explanation of Paths and Security Considerations:**\n\n*   **/users/{userId}**: This path stores user profiles. Access is restricted to the user themselves, ensuring privacy. The `userId` is derived from `request.auth.uid` for authentication.  This allows users to manage their profile and system preferences in settings and profile management.\n*   **/roles_admin/{userId}**:  This collection manages admin roles using document existence. If a document exists for a user ID in this collection, that user has admin privileges.  It simplifies checking for admin status in the rules without needing to read user documents. The early warning system will then be limited to the admin.\n*   **/landslidePoints/{landslidePointId}**: Stores landslide observation points.  Anyone can create, but the admin can make edits.\n*   **/zones/{zoneId}**: Stores geographical zones monitored for landslide risk. Access is controlled to ensure only authorized personnel can create and modify zone data.\n*   **/zones/{zoneId}/alerts/{alertId}**: Stores alerts associated with specific zones.  Includes denormalized risk levels from the zone for authorization independence. A zone can create multiple alerts. Environmental data IDs are stored for retrieval of environmental data.\n*   **/environmentalData/{environmentalDataId}**: Stores environmental data records. This data is read-only and publicly accessible because the data comes from satellites.\n\n**QAPs (Rules are not Filters):**\n\nThe structure facilitates secure `list` operations by segregating data based on access requirements. Publicly readable data (environmental data) is stored in a separate collection from user-specific data (user profiles). The Membership Map strategy used for collaborative data (if any) enables listing documents accessible to a user without filtering on the client side."
+    "reasoning": "The Firestore data structure is designed to ensure authorization independence, clarity, and scalability for the GeoNova Landslide Guardian system.  Authorization Independence is achieved by denormalizing relevant authorization data (such as user roles or membership) into the documents where it's needed. This eliminates the need for `get()` calls in security rules, allowing for atomic operations and improved performance.\n\n**Explanation of Paths and Security Considerations:**\n\n*   **/users/{userId}**: This path stores user profiles. Access is restricted to the user themselves, ensuring privacy. The `userId` is derived from `request.auth.uid` for authentication.  This allows users to manage their profile and system preferences in settings and profile management.\n*   **/roles_admin/{userId}**:  This collection manages admin roles using document existence. If a document exists for a user ID in this collection, that user has admin privileges.  It simplifies checking for admin status in the rules without needing to read user documents. The early warning system will then be limited to the admin.\n*   **/landslidePoints/{landslidePointId}**: Stores landslide observation points.  Anyone can create, but the admin can make edits.\n*   **/zones/{zoneId}**: Stores geographical zones monitored for landslide risk. Access is controlled to ensure only authorized personnel can create and modify zone data.\n*   **/alerts/{alertId}**: A top-level collection for alerts. This simplifies querying for all alerts across all zones, which is useful for the main dashboard and overall system monitoring. It removes the need for collection group queries for simple 'all alerts' views.\n*   **/environmentalData/{environmentalDataId}**: Stores environmental data records. This data is read-only and publicly accessible because the data comes from satellites.\n\n**QAPs (Rules are not Filters):**\n\nThe structure facilitates secure `list` operations by segregating data based on access requirements. Publicly readable data (environmental data) is stored in a separate collection from user-specific data (user profiles). The Membership Map strategy used for collaborative data (if any) enables listing documents accessible to a user without filtering on the client side."
   }
 }
