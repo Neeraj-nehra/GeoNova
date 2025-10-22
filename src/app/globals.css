@@ -84,3 +84,9 @@
     @apply bg-gradient-to-r from-primary to-teal-400 bg-clip-text text-transparent;
   }
 }
+
+@layer utilities {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+  }
+}
