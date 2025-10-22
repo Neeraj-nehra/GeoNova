@@ -149,6 +149,7 @@ export default function InteractiveMap() {
           <div className="lg:col-span-3">
             <div className="aspect-[4/3] w-full rounded-lg overflow-hidden border">
                 <MapContainer
+                  id="interactive-map"
                   center={[30.0668, 79.0193]}
                   zoom={8}
                   style={{ height: "100%", width: "100%" }}
