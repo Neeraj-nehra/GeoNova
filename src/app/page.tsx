@@ -102,13 +102,7 @@ export default function Home() {
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
                     <div className="space-y-4 text-sm text-white/80">
                         <p>
-                            GeoNova Landslide Guardian is a data-driven application built to monitor, assess, and reduce the risks of landslides, with a focus on the vulnerable terrain of Uttarakhand, India.
-                        </p>
-                        <p>
-                           By combining real-time data analysis with robust warning systems, the platform empowers local residents, policymakers, and researchers to stay informed and make proactive safety decisions.
-                        </p>
-                         <p>
-                            GeoNova offers critical tools such as location-based risk assessments, an interactive susceptibility map, an early warning system, and crowdsourced reporting features to help safeguard communities.
+                            GeoNova Landslide Guardian is a data-driven application built to monitor, assess, and reduce the risks of landslides, with a focus on the vulnerable terrain of Uttarakhand, India. It empowers local residents, policymakers, and researchers to stay informed and make proactive safety decisions.
                         </p>
                     </div>
                 </div>
