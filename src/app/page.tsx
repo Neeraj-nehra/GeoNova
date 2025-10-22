@@ -49,11 +49,11 @@ export default function Home() {
           </header>
           
           <Image
-            src="https://picsum.photos/seed/dramatic-mountains/1920/1080"
+            src="https://picsum.photos/seed/green-mountains/1920/1080"
             alt="Hero background"
             fill
             className="object-cover -z-10"
-            data-ai-hint="dramatic mountains"
+            data-ai-hint="green mountains"
           />
           <div className="absolute inset-0 bg-black/50 -z-10"></div>
 
