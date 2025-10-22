@@ -49,11 +49,11 @@ export default function Home() {
           </header>
           
           <Image
-            src="https://picsum.photos/seed/green-mountains/1920/1080"
+            src="https://picsum.photos/seed/dramatic-mountains/1920/1080"
             alt="Hero background"
             fill
             className="object-cover -z-10"
-            data-ai-hint="green mountains"
+            data-ai-hint="dramatic mountains"
           />
           <div className="absolute inset-0 bg-black/50 -z-10"></div>
 
@@ -117,11 +117,11 @@ export default function Home() {
                 </div>
                 <div className="relative h-80 rounded-lg overflow-hidden shadow-xl">
                    <Image
-                    src="https://picsum.photos/seed/map-image/800/600"
-                    alt="Map of Uttarakhand"
+                    src="https://picsum.photos/seed/landslide/800/600"
+                    alt="Image of a landslide"
                     fill
                     className="object-cover"
-                    data-ai-hint="satellite map"
+                    data-ai-hint="landslide"
                     />
                 </div>
             </div>
