@@ -12,13 +12,15 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { User as UserIcon, Bell, Database, Cog, Loader2, UploadCloud } from "lucide-react";
-import { useStorage, useUser } from "@/firebase";
+import { useFirestore, useStorage, useUser, useCollection, useMemoFirebase } from "@/firebase";
 import { useEffect, useRef, useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { updateProfile } from "firebase/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { collection, query, where } from "firebase/firestore";
+import type { WithId } from "@/firebase/firestore/use-collection";
 
 const profileFormSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -30,6 +32,7 @@ type ProfileFormData = z.infer<typeof profileFormSchema>;
 export default function SettingsPage() {
   const { user, isUserLoading } = useUser();
   const storage = useStorage();
+  const firestore = useFirestore();
   const { toast } = useToast();
   
   const [isUploading, setIsUploading] = useState(false);
@@ -42,6 +45,17 @@ export default function SettingsPage() {
       email: "",
     },
   });
+
+  const reportsQuery = useMemoFirebase(() => 
+    firestore && user ? query(collection(firestore, "landslidePoints"), where("userId", "==", user.uid)) : null, 
+  [firestore, user]);
+  const { data: userReports } = useCollection(reportsQuery);
+
+  const alertsQuery = useMemoFirebase(() => 
+    firestore ? collection(firestore, "alerts") : null,
+  [firestore]);
+  const { data: historicalAlerts } = useCollection(alertsQuery);
+
 
   useEffect(() => {
     if (user) {
@@ -99,6 +113,60 @@ export default function SettingsPage() {
     }
   };
 
+  const downloadFile = (filename: string, content: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportReportsToCSV = () => {
+    if (!userReports || userReports.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "No Reports",
+        description: "You have not submitted any reports yet.",
+      });
+      return;
+    }
+    const headers = ["ID", "Latitude", "Longitude", "Description", "Severity", "Source", "Photo URL", "Created At"];
+    const csvRows = [
+      headers.join(','),
+      ...userReports.map(report => [
+        report.id,
+        report.locationLatitude,
+        report.locationLongitude,
+        `"${report.description?.replace(/"/g, '""')}"`,
+        report.severity,
+        report.source,
+        report.photoUrl,
+        report.createdAt?.toDate().toISOString() || ''
+      ].join(','))
+    ];
+    downloadFile("my_submitted_reports.csv", csvRows.join('\n'), "text/csv;charset=utf-8;");
+  };
+
+  const exportAlertsToJSON = () => {
+    if (!historicalAlerts || historicalAlerts.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "No Alerts",
+        description: "There are no historical warnings to export.",
+      });
+      return;
+    }
+    const jsonContent = JSON.stringify(historicalAlerts.map(alert => ({
+        ...alert,
+        createdAt: alert.createdAt?.toDate().toISOString() || null
+    })), null, 2);
+    downloadFile("historical_warnings.json", jsonContent, "application/json;charset=utf-8;");
+  };
+
 
   return (
     <div className="animate-fade-in-up space-y-8">
@@ -138,7 +206,7 @@ export default function SettingsPage() {
                 accept="image/png, image/jpeg"
               />
             </div>
-             <p className="text-sm text-muted-foreground">Click the icon to upload a new avatar. <br/>Recommended size: 200x200px</p>
+             <p className="text-sm text-muted-foreground">Click the icon to upload a new avatar.</p>
           </div>
 
           <Form {...form}>
@@ -252,11 +320,13 @@ export default function SettingsPage() {
             <CardDescription>Download your reports and historical data.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full">Export My Submitted Reports (CSV)</Button>
-            <Button variant="outline" className="w-full">Export Historical Warnings (JSON)</Button>
+            <Button variant="outline" className="w-full" onClick={exportReportsToCSV}>Export My Submitted Reports (CSV)</Button>
+            <Button variant="outline" className="w-full" onClick={exportAlertsToJSON}>Export Historical Warnings (JSON)</Button>
           </CardContent>
         </Card>
       </div>
     </div>
   );
 }
+
+    
