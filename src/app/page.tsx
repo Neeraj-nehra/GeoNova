@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mountain, Map, ShieldCheck, Siren, Send, Twitter, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 
 const features = [
@@ -55,11 +56,19 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="flex flex-col items-center justify-center text-center px-4 py-24 md:py-32">
+        <section className="relative flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 overflow-hidden text-white">
+           <Image
+            src="https://picsum.photos/seed/hero-bg/1920/1080"
+            alt="Lush green mountains"
+            fill
+            className="object-cover -z-10"
+            data-ai-hint="mountain landscape"
+          />
+          <div className="absolute inset-0 bg-black/40 -z-10"></div>
           <h1 className="text-4xl md:text-7xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up">
             Guardians of the Slopes
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground animate-fade-in-up animation-delay-300">
+          <p className="mt-4 max-w-2xl text-lg text-slate-200 animate-fade-in-up animation-delay-300">
             Leveraging AI and real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
           </p>
           <div className="mt-8 animate-fade-in-up animation-delay-600">
