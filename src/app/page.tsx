@@ -8,7 +8,7 @@ const features = [
   {
     icon: <BarChart className="h-10 w-10 text-primary" />,
     title: "Real-time Risk Assessment",
-    description: "Get instant, AI-powered landslide risk analysis for any location in the monitored region using real-time data.",
+    description: "Get instant landslide risk analysis for any location in the monitored region using real-time data.",
   },
   {
     icon: <Map className="h-10 w-10 text-primary" />,
@@ -29,7 +29,7 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative flex flex-col items-center justify-center text-center h-screen overflow-hidden">
-          <Image
+           <Image
             src="https://picsum.photos/seed/green-mountains/1920/1080"
             alt="Mountain background"
             fill
@@ -61,7 +61,7 @@ export default function Home() {
               Guardians of the Slopes
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-white/80 animate-fade-in-up animation-delay-300">
-              Leveraging AI and real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
+              Leveraging real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
             </p>
             <div className="mt-8 animate-fade-in-up animation-delay-600">
               <Button asChild size="lg" className="rounded-full shadow-lg transition-transform transform hover:scale-105 active:scale-95 bg-primary text-primary-foreground hover:bg-primary/90">
@@ -69,11 +69,9 @@ export default function Home() {
               </Button>
             </div>
           </div>
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-            <a href="#features">
-                <MoveDown className="h-8 w-8 text-white/70" />
-            </a>
-          </div>
+          <a href="#features" className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce z-10" aria-label="Scroll to features">
+              <MoveDown className="h-8 w-8 text-white/70" />
+          </a>
         </section>
 
         {/* Features Section */}
@@ -100,17 +98,17 @@ export default function Home() {
         {/* About Section */}
         <section id="about" className="py-20 bg-transparent">
             <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
-                <div className="glass-card rounded-2xl p-8 text-white">
+                <div className="glass-card rounded-2xl p-8 text-white h-80">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
-                    <div className="space-y-4 text-white/80">
+                    <div className="space-y-4 text-sm text-white/80">
                         <p>
-                            GeoNova Landslide Guardian is an intelligent, data-driven application built to monitor, assess, and reduce the risks of landslides—specifically focused on the vulnerable terrain of Uttarakhand, India.
+                            GeoNova Landslide Guardian is a data-driven application built to monitor, assess, and reduce the risks of landslides, with a focus on the vulnerable terrain of Uttarakhand, India.
                         </p>
                         <p>
-                            By combining real-time data analysis with advanced AI models, the platform empowers users to stay informed and make proactive decisions. Whether you're a local resident, a policymaker, or a researcher, GeoNova offers critical tools such as GPS-based risk assessments, an interactive susceptibility map, early warning systems, and crowdsourced reporting features.
+                           By combining real-time data analysis with robust warning systems, the platform empowers local residents, policymakers, and researchers to stay informed and make proactive safety decisions.
                         </p>
                          <p>
-                            It also includes an AI-generated news feed, and a comprehensive dashboard filled with live statistics on vegetation, rainfall, and historical alerts. Designed for both awareness and action, GeoNova Landslide Guardian is your companion in navigating and mitigating landslide threats.
+                            GeoNova offers critical tools such as location-based risk assessments, an interactive susceptibility map, an early warning system, and crowdsourced reporting features to help safeguard communities.
                         </p>
                     </div>
                 </div>
