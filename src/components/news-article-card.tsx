@@ -59,9 +59,11 @@ export function NewsArticleCard({ article }: { article: NewsArticle }) {
             />
           </div>
           <DialogTitle className="text-2xl font-bold font-headline leading-tight">{article.title}</DialogTitle>
-          <DialogDescription className="flex items-center gap-4 pt-2">
-            <Badge variant="secondary">{article.source}</Badge>
-            <span className="text-sm text-muted-foreground">{article.publishedAt}</span>
+          <DialogDescription asChild>
+            <div className="flex items-center gap-4 pt-2">
+              <Badge variant="secondary">{article.source}</Badge>
+              <span className="text-sm text-muted-foreground">{article.publishedAt}</span>
+            </div>
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-[300px] pr-4">
