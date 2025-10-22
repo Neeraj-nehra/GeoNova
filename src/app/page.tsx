@@ -2,6 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Mountain } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function Home() {
   return (
@@ -24,7 +32,19 @@ export default function Home() {
             <span className="text-xl font-bold font-headline">GeoNova</span>
           </Link>
           <nav className="flex items-center gap-4">
-            <Link href="#" className="text-sm font-medium text-white/80 hover:text-white transition">About</Link>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="text-sm font-medium text-white/80 hover:text-white transition">About</button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] bg-white/80 backdrop-blur-lg border-white/30 text-foreground">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-headline">About GeoNova Landslide Guardian</DialogTitle>
+                  <DialogDescription className="text-left pt-4 text-foreground/80">
+                    GeoNova Landslide Guardian is an intelligent, data-driven application built to monitor, assess, and reduce the risks of landslides—specifically focused on the vulnerable terrain of Uttarakhand, India. By combining real-time data analysis with advanced AI models, the platform empowers users to stay informed and make proactive decisions. Whether you're a local resident, a policymaker, or a researcher, GeoNova offers critical tools such as GPS-based risk assessments, an interactive susceptibility map, early warning systems, and crowdsourced reporting features. It also includes an AI-generated news feed and a comprehensive dashboard filled with live statistics on vegetation, rainfall, and historical alerts. Designed for both awareness and action, GeoNova Landslide Guardian is your companion in navigating and mitigating landslide threats.
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
             <Button asChild variant="secondary" size="sm">
                 <Link href="/login">Login</Link>
             </Button>
