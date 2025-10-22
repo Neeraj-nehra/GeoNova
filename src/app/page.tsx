@@ -75,7 +75,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 bg-black dark:bg-transparent">
+        <section id="features" className="py-20 bg-black text-white">
             <div className="container mx-auto px-4 animate-fade-in-up">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline">Key Features</h2>
@@ -83,7 +83,7 @@ export default function Home() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {features.map((feature, index) => (
-                        <div key={index} className="text-center p-8 rounded-2xl bg-card border">
+                        <div key={index} className="text-center p-8 rounded-2xl glass-card">
                             <div className="flex justify-center mb-4">
                                 {feature.icon}
                             </div>
@@ -118,8 +118,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer id="contact" className="bg-muted/50 border-t">
-          <div className="container mx-auto px-4 py-12 text-center">
+      <footer id="contact" className="bg-black border-t border-white/10">
+          <div className="container mx-auto px-4 py-12 text-center text-white">
             <div className="flex justify-center items-center gap-2">
               <Mountain className="h-6 w-6 text-primary" />
               <h3 className="text-2xl font-bold font-headline">GeoNova</h3>
