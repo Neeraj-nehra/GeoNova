@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,8 @@ import {
   AuthError,
   updateProfile,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +59,28 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const processRedirect = async () => {
+        try {
+            setIsLoadingGoogle(true);
+            const result = await getRedirectResult(auth);
+            if (result) {
+                toast({
+                    title: "Signed in with Google",
+                    description: "Welcome! Redirecting to your dashboard.",
+                });
+                router.push("/dashboard");
+            }
+        } catch (err: any) {
+            const authError = err as AuthError;
+            setError(authError.message || "Failed to sign in with Google.");
+        } finally {
+            setIsLoadingGoogle(false);
+        }
+    };
+    processRedirect();
+  }, [auth, router, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,19 +131,8 @@ export function LoginForm() {
     setIsLoadingGoogle(true);
     setError("");
     const provider = new GoogleAuthProvider();
-    try {
-        await signInWithPopup(auth, provider);
-        toast({
-            title: "Signed in with Google",
-            description: "Welcome! Redirecting to your dashboard.",
-        });
-        router.push("/dashboard");
-    } catch (err: any) {
-        const authError = err as AuthError;
-        setError(authError.message || "Failed to sign in with Google.");
-    } finally {
-        setIsLoadingGoogle(false);
-    }
+    // Using signInWithRedirect to avoid popup blockers
+    await signInWithRedirect(auth, provider);
   }
 
   return (
