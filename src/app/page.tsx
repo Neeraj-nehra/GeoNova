@@ -18,25 +18,17 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative flex flex-col items-center justify-center text-center h-screen overflow-hidden">
-           <Image
-            src="https://picsum.photos/seed/dramatic-mountains/1920/1080"
-            alt="Dramatic mountain background"
-            fill
-            className="object-cover -z-10"
-            data-ai-hint="dramatic mountains"
-          />
-          <div className="absolute inset-0 bg-black/50 -z-10"></div>
           
           <header className="absolute top-0 w-full p-4 sm:p-6 z-50">
             <div className="container mx-auto flex justify-between items-center">
-              <Link href="/" className="flex items-center gap-2 text-white">
+              <Link href="/" className="flex items-center gap-2">
                 <Mountain className="h-7 w-7" />
                 <span className="text-2xl font-bold font-headline">GeoNova</span>
               </Link>
               <nav className="flex items-center gap-2">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">About</Button>
+                    <Button variant="ghost" size="sm">About</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -61,10 +53,10 @@ export default function Home() {
           </header>
 
           <div className="relative z-10 px-4">
-            <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
               Guardians of the Slopes
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-gray-200 animate-fade-in-up animation-delay-300">
+            <p className="mt-4 max-w-2xl text-lg text-muted-foreground animate-fade-in-up animation-delay-300">
               Leveraging AI and real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
             </p>
             <div className="mt-8 animate-fade-in-up animation-delay-600">
@@ -72,8 +64,8 @@ export default function Home() {
                 <Link href="/login">Get Started</Link>
               </Button>
             </div>
-             <div className="absolute bottom-[-8rem] left-1/2 -translate-x-1/2 animate-bounce mt-8">
-              <MoveDown className="h-8 w-8 text-gray-400/70" />
+             <div className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce mt-8">
+              <MoveDown className="h-8 w-8 text-muted-foreground/70" />
             </div>
           </div>
         </section>
