@@ -20,21 +20,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, MapPin, UploadCloud } from "lucide-react";
 import { useState } from "react";
+import { useFirestore, useStorage, useUser } from "@/firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 const formSchema = z.object({
   latitude: z.string().min(1, "Latitude is required"),
   longitude: z.string().min(1, "Longitude is required"),
   description: z.string().min(10, "Description must be at least 10 characters.").max(500),
   severity: z.enum(["Low", "Medium", "High"]),
-  photo: z.any().optional(),
+  photo: z.instanceof(FileList).optional(),
 });
+
+type FormData = z.infer<typeof formSchema>;
 
 export function SubmitReportForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const firestore = useFirestore();
+  const storage = useStorage();
+  const { user } = useUser();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       latitude: "",
@@ -44,17 +54,69 @@ export function SubmitReportForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormData) {
+    if (!user) {
+        toast({
+            variant: "destructive",
+            title: "Authentication Error",
+            description: "You must be logged in to submit a report."
+        });
+        return;
+    }
+
     setIsSubmitting(true);
-    console.log(values);
-    setTimeout(() => {
+    try {
+        let photoUrl = "";
+        const photoFile = values.photo?.[0];
+
+        const landslidePointsCollection = collection(firestore, "landslidePoints");
+        const newReportRef = (await addDoc(landslidePointsCollection, {})).id;
+        
+        if (photoFile) {
+            const storageRef = ref(storage, `reports/${user.uid}/${newReportRef}/${photoFile.name}`);
+            const uploadResult = await uploadBytes(storageRef, photoFile);
+            photoUrl = await getDownloadURL(uploadResult.ref);
+        }
+
+        const landslidePointData = {
+          locationLatitude: parseFloat(values.latitude),
+          locationLongitude: parseFloat(values.longitude),
+          description: values.description,
+          severity: values.severity,
+          source: "user-report",
+          userId: user.uid,
+          createdAt: serverTimestamp(),
+          photoUrl: photoUrl,
+        };
+
+        const docRef = (await addDoc(landslidePointsCollection, landslidePointData));
+
+        docRef.catch(error => {
+          errorEmitter.emit(
+            'permission-error',
+            new FirestorePermissionError({
+              path: `landslidePoints/${docRef.id}`,
+              operation: 'create',
+              requestResourceData: landslidePointData,
+            })
+          )
+        });
+
       toast({
         title: "Report Submitted Successfully",
         description: "Thank you for contributing to the safety of our community.",
       });
       form.reset();
-      setIsSubmitting(false);
-    }, 1500);
+    } catch (error: any) {
+        console.error("Error submitting report: ", error);
+        toast({
+            variant: "destructive",
+            title: "Submission Failed",
+            description: error.message || "An unknown error occurred.",
+        })
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   const handleFetchLocation = () => {
@@ -157,7 +219,7 @@ export function SubmitReportForm() {
             <FormField
                 control={form.control}
                 name="photo"
-                render={({ field }) => (
+                render={({ field: { onChange, value, ...rest } }) => (
                 <FormItem>
                     <FormLabel>Upload Photo</FormLabel>
                     <FormControl>
@@ -168,7 +230,9 @@ export function SubmitReportForm() {
                                     <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                     <p className="text-xs text-muted-foreground">PNG, JPG or GIF (MAX. 5MB)</p>
                                 </div>
-                                <Input id="dropzone-file" type="file" className="hidden" {...field} />
+                                <Input id="dropzone-file" type="file" className="hidden" {...rest} onChange={(event) => {
+                                  onChange(event.target.files);
+                                }}/>
                             </label>
                         </div> 
                     </FormControl>
