@@ -60,7 +60,7 @@ export default function Home() {
             <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
               Predicting the Unstable Earth
             </h1>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-white/80 animate-fade-in-up animation-delay-300">
+            <p className="mt-4 max-w-2xl mx-auto text-lg text-white/80 animate-fade-in-up animation-delay-300 text-center">
               Forecasting and mitigating landslide risks to protect communities in the Uttarakhand region.
             </p>
             <div className="mt-8 animate-fade-in-up animation-delay-600">
@@ -130,12 +130,16 @@ export default function Home() {
               Stay connected with our mission to safeguard communities through technology and data.
             </p>
             <div className="flex justify-center gap-6 mb-8">
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Twitter className="h-6 w-6" /></a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="h-6 w-6" /></a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Github className="h-6 w-6" /></a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Mail className="h-6 w-6" /></a>
+                <a href="https://twitter.com/your-profile" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Twitter className="h-6 w-6" /></a>
+                <a href="https://linkedin.com/in/your-profile" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="h-6 w-6" /></a>
+                <a href="https://github.com/your-profile" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Github className="h-6 w-6" /></a>
+                <a href="mailto:your-email@example.com" className="text-muted-foreground hover:text-primary transition-colors"><Mail className="h-6 w-6" /></a>
             </div>
-            <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} GeoNova. All rights reserved. Built by the GeoNova Team.</p>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>For any help or inquiries, feel free to contact us.</p>
+              <p>&copy; {new Date().getFullYear()} GeoNova. All rights reserved.</p>
+              <p>Built with ❤️ by The GeoNova Team: Jane Doe, John Smith, and Alex Ray.</p>
+            </div>
           </div>
       </footer>
     </div>
