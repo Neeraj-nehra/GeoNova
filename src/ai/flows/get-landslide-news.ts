@@ -39,7 +39,7 @@ For each article, provide:
 - A concise summary (1-2 sentences).
 - A relative published time (e.g., "3 hours ago", "1 day ago").
 - A relevant placeholder image URL from 'https://picsum.photos/seed/{seed}/600/400' where {seed} is a random number.
-- A placeholder URL for the article link (e.g., "#").
+- A valid, placeholder URL for the article link (e.g., "https://example.com/news/123").
 
 Ensure the stories are varied, covering different locations within Uttarakhand and different aspects of the landslide issue (e.g., warnings, recent events, government response).`,
 });
