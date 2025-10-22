@@ -138,7 +138,7 @@ export default function Home() {
             <div className="text-sm text-muted-foreground space-y-2">
               <p>For any help or inquiries, feel free to contact us.</p>
               <p>&copy; {new Date().getFullYear()} GeoNova. All rights reserved.</p>
-              <p>Built with ❤️ by The GeoNova Team: Jane Doe, John Smith, and Alex Ray.</p>
+              <p>Built by The GeoNova Team: Neeraj Kumar , Mohan Ingale, Lakshay Meena</p>
             </div>
           </div>
       </footer>
