@@ -29,6 +29,14 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative flex flex-col items-center justify-center text-center h-screen overflow-hidden">
+          <Image
+            src="https://picsum.photos/seed/green-mountains/1920/1080"
+            alt="Mountain background"
+            fill
+            className="object-cover -z-10"
+            data-ai-hint="green mountains"
+          />
+          <div className="absolute inset-0 bg-black/30 -z-10"></div>
           
           <header className="absolute top-0 w-full p-4 sm:p-6 z-50">
             <div className="container mx-auto flex justify-between items-center">
@@ -52,7 +60,7 @@ export default function Home() {
             <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
               Guardians of the Slopes
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-muted-foreground animate-fade-in-up animation-delay-300">
+            <p className="mt-4 max-w-2xl text-lg text-white/80 animate-fade-in-up animation-delay-300">
               Leveraging AI and real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
             </p>
             <div className="mt-8 animate-fade-in-up animation-delay-600">
@@ -69,20 +77,20 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 bg-background">
+        <section id="features" className="py-20 bg-transparent">
             <div className="container mx-auto px-4 animate-fade-in-up">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline">Key Features</h2>
-                    <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Our platform provides a comprehensive suite of tools to monitor and mitigate landslide risks.</p>
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline text-white">Key Features</h2>
+                    <p className="text-white/70 mt-2 max-w-2xl mx-auto">Our platform provides a comprehensive suite of tools to monitor and mitigate landslide risks.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {features.map((feature, index) => (
-                        <div key={index} className="text-center p-8 rounded-lg bg-card border border-border/50">
+                        <div key={index} className="text-center p-8 rounded-2xl glass-card text-white">
                             <div className="flex justify-center mb-4">
                                 {feature.icon}
                             </div>
                             <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                            <p className="text-muted-foreground">{feature.description}</p>
+                            <p className="text-white/80">{feature.description}</p>
                         </div>
                     ))}
                 </div>
@@ -90,11 +98,11 @@ export default function Home() {
         </section>
         
         {/* About Section */}
-        <section id="about" className="py-20 bg-card border-y">
+        <section id="about" className="py-20 bg-transparent">
             <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
-                <div>
+                <div className="glass-card rounded-2xl p-8 text-white">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
-                    <div className="space-y-4 text-muted-foreground">
+                    <div className="space-y-4 text-white/80">
                         <p>
                             GeoNova Landslide Guardian is an intelligent, data-driven application built to monitor, assess, and reduce the risks of landslides—specifically focused on the vulnerable terrain of Uttarakhand, India.
                         </p>
@@ -120,7 +128,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer id="contact" className="bg-background border-t border-border/50 py-12">
+      <footer id="contact" className="bg-background/80 backdrop-blur-sm border-t border-border/50 py-12">
           <div className="container mx-auto px-4 text-center">
             <div className="flex justify-center items-center gap-2 mb-4">
               <Mountain className="h-6 w-6 text-primary" />
