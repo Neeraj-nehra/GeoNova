@@ -34,18 +34,18 @@ export async function getLandslideNews(): Promise<LandslideNewsOutput> {
 const prompt = ai.definePrompt({
   name: 'landslideNewsPrompt',
   output: {schema: LandslideNewsOutputSchema},
-  prompt: `You are a news aggregator specializing in geological events. Generate a list of 5 recent, realistic but fictional news articles about landslide events or risks in the Uttarakhand region of India.
+  prompt: `You are a news editor for a major publication, tasked with creating a news feed about landslide activity in the Uttarakhand region of India. Generate a list of 5 recent, realistic but fictional news articles.
 
-For each article, provide:
-- A compelling title.
+For each article, provide the following in a journalistic style:
+- A compelling and specific headline.
 - A plausible news source (e.g., "Times of India", "Hindustan Times", "Local Press").
-- A concise summary (1-2 sentences).
-- A full article body (3-4 paragraphs), written in a journalistic style.
+- A concise one-paragraph summary that grabs the reader's attention.
+- A full article body of at least 4-5 detailed paragraphs. The body should read like a real news report, including fictional quotes from officials, experts, or affected residents to add authenticity.
 - A relative published time (e.g., "3 hours ago", "1 day ago").
 - A relevant placeholder image URL from 'https://picsum.photos/seed/{seed}/600/400' where {seed} is a random number.
 - A valid, placeholder URL for the article link (e.g., "https://example.com/news/123").
 
-Ensure the stories are varied, covering different locations within Uttarakhand and different aspects of the landslide issue (e.g., warnings, recent events, government response).`,
+Ensure the stories are varied and feel authentic, covering different locations within Uttarakhand and different aspects of the landslide issue (e.g., recent events, government response, scientific analysis, human impact).`,
 });
 
 const getLandslideNewsFlow = ai.defineFlow(
