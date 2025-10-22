@@ -1,7 +1,7 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,8 +69,11 @@ const riskBadgeVariant = (risk: string) : "destructive" | "secondary" | "default
     }
 }
 
-function MapEvents({ onMapClick, flyTo }: { onMapClick: (latLng: L.LatLng) => void, flyTo: L.LatLng | null }) {
+function MapController({ flyTo }: { flyTo: L.LatLng | null }) {
     const map = useMap();
+    const [clickedPosition, setClickedPosition] = useState<L.LatLng | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [assessment, setAssessment] = useState<MapRiskAssessmentOutput | null>(null);
     
     useEffect(() => {
         if(flyTo) {
@@ -78,34 +81,65 @@ function MapEvents({ onMapClick, flyTo }: { onMapClick: (latLng: L.LatLng) => vo
         }
     }, [flyTo, map]);
 
-    map.on('click', (e) => {
-        onMapClick(e.latlng);
-    });
+    const assessRisk = async (pos: L.LatLng) => {
+      setIsLoading(true);
+      setClickedPosition(pos);
+      setAssessment(null);
+      try {
+        const result = await assessMapRisk({ latitude: pos.lat, longitude: pos.lng });
+        setAssessment(result);
+      } catch (e) {
+        console.error("Risk assessment failed:", e);
+        setAssessment({ riskPercentage: 0, analysis: "Could not assess risk. Please try again later." });
+      }
+      setIsLoading(false);
+    };
 
-    return null;
+    useEffect(() => {
+      const onMapClick = (e: L.LeafletMouseEvent) => {
+        assessRisk(e.latlng);
+      };
+      map.on('click', onMapClick);
+      return () => {
+        map.off('click', onMapClick);
+      };
+    }, [map]);
+
+    return clickedPosition ? (
+      <Marker position={clickedPosition}>
+        <Popup>
+          <div className="w-64">
+            {isLoading ? (
+              <div className="flex items-center justify-center p-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : assessment ? (
+              <div className="space-y-2">
+                <h3 className="font-bold flex items-center gap-2">
+                  <RiskIcon risk={assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} className="h-5 w-5" />
+                   Risk Assessment
+                </h3>
+                <div className="text-center">
+                  <p className="text-3xl font-bold">{assessment.riskPercentage}%</p>
+                  <Badge variant={riskBadgeVariant(assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low')}>
+                    {assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} Risk
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">{assessment.analysis}</p>
+              </div>
+            ) : (
+              <p>Click on the map to assess risk.</p>
+            )}
+          </div>
+        </Popup>
+      </Marker>
+    ) : null;
 }
 
 
 export default function InteractiveMap() {
-  const [clickedPosition, setClickedPosition] = useState<L.LatLng | null>(null);
   const [currentTileLayer, setCurrentTileLayer] = useState<keyof typeof tileLayers>('default');
-  const [isLoading, setIsLoading] = useState(false);
-  const [assessment, setAssessment] = useState<MapRiskAssessmentOutput | null>(null);
   const [flyTo, setFlyTo] = useState<L.LatLng | null>(null);
-
-  const assessRisk = async (pos: L.LatLng) => {
-    setIsLoading(true);
-    setClickedPosition(pos);
-    setAssessment(null);
-    try {
-      const result = await assessMapRisk({ latitude: pos.lat, longitude: pos.lng });
-      setAssessment(result);
-    } catch (e) {
-      console.error("Risk assessment failed:", e);
-      setAssessment({ riskPercentage: 0, analysis: "Could not assess risk. Please try again later." });
-    }
-    setIsLoading(false);
-  };
 
   const handleDistrictSelect = (center: [number, number]) => {
     setFlyTo(L.latLng(center[0], center[1]));
@@ -164,37 +198,7 @@ export default function InteractiveMap() {
                     attribution={tileLayers[currentTileLayer].attribution}
                     key={currentTileLayer}
                   />
-                  <MapEvents onMapClick={assessRisk} flyTo={flyTo} />
-
-                  {clickedPosition && (
-                    <Marker position={clickedPosition}>
-                      <Popup>
-                        <div className="w-64">
-                          {isLoading ? (
-                            <div className="flex items-center justify-center p-4">
-                              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            </div>
-                          ) : assessment ? (
-                            <div className="space-y-2">
-                              <h3 className="font-bold flex items-center gap-2">
-                                <RiskIcon risk={assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} className="h-5 w-5" />
-                                 Risk Assessment
-                              </h3>
-                              <div className="text-center">
-                                <p className="text-3xl font-bold">{assessment.riskPercentage}%</p>
-                                <Badge variant={riskBadgeVariant(assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low')}>
-                                  {assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} Risk
-                                </Badge>
-                              </div>
-                              <p className="text-xs text-muted-foreground">{assessment.analysis}</p>
-                            </div>
-                          ) : (
-                            <p>Click on the map to assess risk.</p>
-                          )}
-                        </div>
-                      </Popup>
-                    </Marker>
-                  )}
+                  <MapController flyTo={flyTo} />
                 </MapContainer>
             </div>
           </div>
