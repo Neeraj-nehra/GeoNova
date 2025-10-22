@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { BarChart, Map, MoveDown, Mountain, Siren, FileText, Users, Mail, Twitter, Linkedin, Github } from "lucide-react";
+import { BarChart, Map, Mountain, Siren, FileText, Users, Mail, Twitter, Linkedin, Github } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -68,11 +68,6 @@ export default function Home() {
               <Button asChild size="lg" className="rounded-full shadow-lg transition-transform transform hover:scale-105 active:scale-95 bg-primary text-primary-foreground hover:bg-primary/90">
                 <Link href="/login">Get Started</Link>
               </Button>
-            </div>
-             <div className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce mt-8">
-              <a href="#features" aria-label="Scroll to features">
-                <MoveDown className="h-8 w-8 text-muted-foreground/70" />
-              </a>
             </div>
           </div>
         </section>
