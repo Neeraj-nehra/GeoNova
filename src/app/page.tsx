@@ -130,8 +130,8 @@ export default function Home() {
             </p>
             <div className="flex flex-col items-center gap-6 mb-8">
                 <div className="flex gap-6">
-                    <a href="https://linkedin.com/in/your-profile" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="h-6 w-6" /></a>
-                    <a href="mailto:your-email@example.com" className="text-muted-foreground hover:text-primary transition-colors"><Mail className="h-6 w-6" /></a>
+                    <a href="https://www.linkedin.com/in/neeraj-kumar-8790b3324?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="h-6 w-6" /></a>
+                    <a href="mailto:neeraj_k@ce.iitr.ac.in" className="text-muted-foreground hover:text-primary transition-colors"><Mail className="h-6 w-6" /></a>
                 </div>
                 <p className="text-sm text-muted-foreground">For any help or inquiries, feel free to contact us.</p>
             </div>
