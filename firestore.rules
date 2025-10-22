@@ -1,165 +1,139 @@
+/**
+ * @fileoverview Firestore Security Rules for the GeoNova Landslide Guardian system.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a combination of user-ownership and role-based access control.
+ * User data is strictly private, while landslide data has more open read access, with
+ * restricted write access based on admin roles or ownership.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores user profiles, accessible only to the user themselves.
+ * - /roles_admin/{userId}: Presence of document indicates admin role for the user.
+ * - /landslidePoints/{landslidePointId}: Stores landslide observation points, publicly readable but write-protected except for admins.
+ * - /zones/{zoneId}: Stores geographical zones, write-protected except for admins.
+ * - /alerts/{alertId}: Stores alerts, publicly readable, write-protected except for admins.
+ * - /environmentalData/{environmentalDataId}: Stores environmental data, publicly readable, write-protected.
+ *
+ * Key Security Decisions:
+ * - User listing is disallowed to protect privacy.
+ * - Admin role is determined by the existence of a document in /roles_admin/{userId}.
+ * - Environmental data is considered public and read-only.
+ *
+ * Denormalization for Authorization:
+ * - Admin role is determined by the existence of a document in `/roles_admin/{userId}`, avoiding the need to read the user document to determine its `role` field.
+ */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile data.
+     * @description Checks if the user is signed in.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the authenticated user ID matches the provided user ID.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the authenticated user is an admin.
+     */
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * @description Rules for user profiles.
      * @path /users/{userId}
-     * @allow (create) User with ID 'user123' can create their own profile.
-     * @allow (get) User with ID 'user123' can read their own profile.
-     * @allow (update) User with ID 'user123' can update their own profile.
-     * @allow (delete) User with ID 'user123' can delete their own profile.
-     * @deny (create) User with ID 'user123' cannot create a profile with ID 'user456'.
-     * @deny (get) User with ID 'user123' cannot read the profile of user 'user456'.
-     * @deny (update) User with ID 'user123' cannot update the profile of user 'user456'.
-     * @deny (delete) User with ID 'user123' cannot delete the profile of user 'user456'.
-     * @principle Enforces user-ownership; only the user can access their own profile.
+     * @allow (create) - User with matching ID can create their profile.
+     * @allow (get, update, delete, list) - User with matching ID can access their profile.
+     * @deny (create) - User cannot create a profile with an ID that doesn't match their auth ID.
+     * @deny (get, update, delete, list) - User cannot access another user's profile.
+     * @principle Enforces strict user-ownership.
      */
     match /users/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource.data != null;
-      }
-
       allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false; // Listing user documents is not permitted.
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId) && request.auth.uid == userId;
+      allow update: if isSignedIn() && isOwner(userId);
+      allow delete: if isSignedIn() && isOwner(userId);
     }
 
     /**
-     * @description Manages admin roles; document existence grants admin privileges.
+     * @description Rules for admin roles.
      * @path /roles_admin/{userId}
-     * @allow (create) User with ID 'admin123' can be granted admin role (document created).
-     * @allow (get) Anyone can check if 'admin123' has admin role (document exists).
-     * @allow (update) User with ID 'admin123' with admin rights can update their admin role (document updated).
-     * @allow (delete) User with ID 'admin123' with admin rights can have their admin role revoked (document deleted).
-     * @deny (create) User with ID 'user123' cannot grant themselves admin role.
-     * @principle Implements role-based access control using document existence.
+     * @allow (create) - Only an admin can grant admin roles.
+     * @allow (get, delete) - Only an admin can view or revoke admin roles.
+     * @deny (create, get, delete) - Non-admins cannot manage admin roles.
+     * @principle Enforces strict admin-only role management.
      */
     match /roles_admin/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-      }
-
-      allow get: if isSignedIn();
-      allow list: if false; // Listing admin roles is not permitted.
-      allow create: if isSignedIn() && request.auth.uid == userId && !exists(/databases/$(database)/documents/roles_admin/$(userId));
-      allow update: if isAdmin() && request.auth.uid == userId;
-      allow delete: if isAdmin() && request.auth.uid == userId;
+      allow get: if isSignedIn() && isAdmin();
+      allow list: if false;
+      allow create: if isSignedIn() && isAdmin();
+      allow update: if false;
+      allow delete: if isSignedIn() && isAdmin();
     }
 
     /**
-     * @description Controls access to landslide observation points.
+     * @description Rules for landslide observation points.
      * @path /landslidePoints/{landslidePointId}
-     * @allow (get) Anyone can read landslide point data.
-     * @allow (list) Anyone can list landslide points.
-     * @allow (create) Any signed in user can create a new landslide point.
-     * @deny (update) Only the admin can update the landslide points.
-     * @deny (delete) Only the admin can delete the landslide points.
-     * @principle Publicly readable, owner-writeable with admin override.
+     * @allow (get, list) - Anyone can read landslide points.
+     * @allow (create, update, delete) - Only admins can create, update, or delete landslide points.
+     * @deny (create, update, delete) - Non-admins cannot modify landslide points.
+     * @principle Allows public read access with restricted write access.
      */
     match /landslidePoints/{landslidePointId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-      }
-
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn();
+      allow get, list: if true;
+      allow create: if isSignedIn() && isAdmin();
       allow update: if isSignedIn() && isAdmin();
       allow delete: if isSignedIn() && isAdmin();
     }
 
     /**
-     * @description Controls access to geographical zones monitored for landslide risk.
+     * @description Rules for geographical zones.
      * @path /zones/{zoneId}
-     * @allow (get) Only the admin can read geographical zones.
-     * @allow (list) Only the admin can list the geographical zones.
-     * @allow (create) Only the admin can create a new geographical zone.
-     * @allow (update) Only the admin can update an existing geographical zone.
-     * @allow (delete) Only the admin can delete an existing geographical zone.
-     * @principle Restricts zone management to administrators.
+     * @allow (get, list) - Anyone can read zones.
+     * @allow (create, update, delete) - Only admins can create, update, or delete zones.
+     * @deny (create, update, delete) - Non-admins cannot modify zones.
+     * @principle Allows public read access with restricted write access.
      */
     match /zones/{zoneId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-      }
-
-      function isExistingAdmin() {
-        return isAdmin() && resource.data != null;
-      }
-
-      allow get: if isSignedIn() && isAdmin();
-      allow list: if isSignedIn() && isAdmin();
+      allow get, list: if true;
       allow create: if isSignedIn() && isAdmin();
       allow update: if isSignedIn() && isAdmin();
       allow delete: if isSignedIn() && isAdmin();
     }
 
     /**
-     * @description Controls access to alerts associated with specific zones.
-     * @path /zones/{zoneId}/alerts/{alertId}
-     * @allow (get) Only the admin can read alerts for a specific zone.
-     * @allow (list) Only the admin can list alerts for a specific zone.
-     * @allow (create) Only the admin can create alerts for a specific zone.
-     * @allow (update) Only the admin can update alerts for a specific zone.
-     * @allow (delete) Only the admin can delete alerts for a specific zone.
-     * @principle Alerts are managed by administrators within their respective zones.
+     * @description Rules for alerts.
+     * @path /alerts/{alertId}
+     * @allow (get, list) - Anyone can read alerts.
+     * @allow (create, update, delete) - Only admins can create, update, or delete alerts.
+     * @deny (create, update, delete) - Non-admins cannot modify alerts.
+     * @principle Allows public read access with restricted write access.
      */
-    match /zones/{zoneId}/alerts/{alertId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-      }
-
-      function isExistingAdmin() {
-        return isAdmin() && resource.data != null;
-      }
-
-      allow get: if isSignedIn() && isAdmin();
-      allow list: if isSignedIn() && isAdmin();
+    match /alerts/{alertId} {
+      allow get, list: if true;
       allow create: if isSignedIn() && isAdmin();
       allow update: if isSignedIn() && isAdmin();
       allow delete: if isSignedIn() && isAdmin();
     }
 
     /**
-     * @description Allows public read access to environmental data records.
+     * @description Rules for environmental data.
      * @path /environmentalData/{environmentalDataId}
-     * @allow (get) Anyone can read environmental data.
-     * @allow (list) Anyone can list environmental data.
-     * @deny (create) No one can create environmental data.
-     * @deny (update) No one can update environmental data.
-     * @deny (delete) No one can delete environmental data.
-     * @principle Environmental data is publicly readable.
+     * @allow (get, list) - Anyone can read environmental data.
+     * @deny (create, update, delete) - No one can create, update, or delete environmental data.
+     * @principle Allows public read access with no write access.
      */
     match /environmentalData/{environmentalDataId} {
-      allow get: if true;
-      allow list: if true;
+      allow get, list: if true;
       allow create: if false;
       allow update: if false;
       allow delete: if false;
