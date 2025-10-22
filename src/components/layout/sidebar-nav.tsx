@@ -31,6 +31,8 @@ import {
   Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth, useUser } from "@/firebase";
+import { signOut } from "firebase/auth";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -44,9 +46,13 @@ const navItems = [
 export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const auth = useAuth();
+  const { user } = useUser();
 
   const handleLogout = () => {
-    router.push("/");
+    signOut(auth).then(() => {
+      router.push("/");
+    });
   };
 
   return (
@@ -87,14 +93,14 @@ export function SidebarNav() {
         <SidebarFooter className="p-4">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src="https://picsum.photos/seed/avatar/100/100" />
+              <AvatarImage src={user?.photoURL ?? `https://picsum.photos/seed/avatar/100/100`} />
               <AvatarFallback>
                 <UserCircle />
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-semibold text-white truncate">Demo User</p>
-              <p className="text-xs text-emerald-200 truncate">demo@geonova.com</p>
+              <p className="text-sm font-semibold text-white truncate">{user?.displayName || 'User'}</p>
+              <p className="text-xs text-emerald-200 truncate">{user?.email || 'No email'}</p>
             </div>
             <Button
               variant="ghost"

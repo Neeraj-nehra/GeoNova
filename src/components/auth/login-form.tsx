@@ -10,39 +10,53 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info, Loader2, Lock, User, Mountain } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { useAuth } from "@/firebase";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  AuthErrorCodes,
+} from "firebase/auth";
 
-const demoUsers = {
-  "demo@geonova.com": "demo123",
-  "admin@geonova.com": "admin123",
-  "test@geonova.com": "test123",
-};
 
 export function LoginForm() {
   const router = useRouter();
+  const auth = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    setTimeout(() => {
-      // Demo login logic
-      if (demoUsers[email as keyof typeof demoUsers] === password) {
-        toast({
-          title: "Login Successful",
-          description: "Welcome back! Redirecting to your dashboard.",
-        });
-        router.push("/dashboard");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast({
+        title: "Login Successful",
+        description: "Welcome back! Redirecting to your dashboard.",
+      });
+      router.push("/dashboard");
+    } catch (err: any) {
+      if (err.code === AuthErrorCodes.INVALID_credential) {
+         try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            toast({
+                title: "Account Created",
+                description: "Welcome! Your new account has been created.",
+            });
+            router.push("/dashboard");
+         } catch (signUpError: any) {
+            setError(`Failed to sign up: ${signUpError.message}`);
+         }
       } else {
-        setError("Invalid email or password. Please try again.");
-        setIsLoading(false);
+        setError(`Failed to sign in: ${err.message}`);
       }
-    }, 1000);
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (
@@ -65,7 +79,7 @@ export function LoginForm() {
               <Input
                 id="email"
                 type="email"
-                placeholder="Username"
+                placeholder="Email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -106,25 +120,17 @@ export function LoginForm() {
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-full text-base font-bold h-12 transition-all duration-300 transform hover:scale-105" 
                 disabled={isLoading}
             >
-              {isLoading ? <Loader2 className="animate-spin" /> : "Sign In"}
+              {isLoading ? <Loader2 className="animate-spin" /> : "Sign In / Sign Up"}
             </Button>
             
-            <p className="text-center text-xs text-white/60">
-              Don't have an account?{" "}
-              <Link href="#" className="font-semibold text-white/80 hover:text-white hover:underline">
-                Sign up
-              </Link>
-            </p>
-
           </form>
         </div>
       </div>
        <Alert className="mt-6 bg-black/20 border-white/20 text-white">
           <Info className="h-4 w-4 text-white/80" />
-          <AlertTitle className="text-white/90">Demo Credentials</AlertTitle>
+          <AlertTitle className="text-white/90">Sign In or Sign Up</AlertTitle>
           <AlertDescription className="text-white/70">
-            Use <span className="font-semibold text-white">demo@geonova.com</span> with password{" "}
-            <span className="font-semibold text-white">demo123</span>.
+            Enter any email and password. If the account doesn't exist, one will be created for you.
           </AlertDescription>
         </Alert>
     </div>
