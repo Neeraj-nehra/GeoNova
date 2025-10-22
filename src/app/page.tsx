@@ -130,9 +130,7 @@ export default function Home() {
               Stay connected with our mission to safeguard communities through technology and data.
             </p>
             <div className="flex justify-center gap-6 mb-8">
-                <a href="https://twitter.com/your-profile" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Twitter className="h-6 w-6" /></a>
                 <a href="https://linkedin.com/in/your-profile" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="h-6 w-6" /></a>
-                <a href="https://github.com/your-profile" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Github className="h-6 w-6" /></a>
                 <a href="mailto:your-email@example.com" className="text-muted-foreground hover:text-primary transition-colors"><Mail className="h-6 w-6" /></a>
             </div>
             <div className="text-sm text-muted-foreground space-y-2">
