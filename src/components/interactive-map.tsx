@@ -1,7 +1,7 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import React, { useState, useMemo } from "react";
+import React, { useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -106,52 +106,6 @@ export default function InteractiveMap() {
     }
   };
 
-  const memoizedMap = useMemo(() => (
-    <MapContainer
-      center={[30.0668, 79.0193]}
-      zoom={8}
-      style={{ height: "100%", width: "100%" }}
-      className="rounded-lg"
-      whenCreated={mapInstance => { mapRef.current = mapInstance }}
-    >
-      <TileLayer
-        url={tileLayers[currentTileLayer].url}
-        attribution={tileLayers[currentTileLayer].attribution}
-      />
-      <MapClickHandler setClickedPosition={setClickedPosition} assessRisk={assessRisk} />
-
-      {clickedPosition && (
-        <Marker position={clickedPosition}>
-          <Popup>
-            <div className="w-64">
-              {isLoading ? (
-                <div className="flex items-center justify-center p-4">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              ) : assessment ? (
-                <div className="space-y-2">
-                  <h3 className="font-bold flex items-center gap-2">
-                    <RiskIcon risk={assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} className="h-5 w-5" />
-                     Risk Assessment
-                  </h3>
-                  <div className="text-center">
-                    <p className="text-3xl font-bold">{assessment.riskPercentage}%</p>
-                    <Badge variant={riskBadgeVariant(assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low')}>
-                      {assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} Risk
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{assessment.analysis}</p>
-                </div>
-              ) : (
-                <p>Click on the map to assess risk.</p>
-              )}
-            </div>
-          </Popup>
-        </Marker>
-      )}
-    </MapContainer>
-  ), [currentTileLayer, clickedPosition, isLoading, assessment]);
-
   return (
       <Card>
         <CardHeader>
@@ -194,7 +148,49 @@ export default function InteractiveMap() {
         <CardContent className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">
             <div className="aspect-[4/3] w-full rounded-lg overflow-hidden border">
-              {memoizedMap}
+                <MapContainer
+                  center={[30.0668, 79.0193]}
+                  zoom={8}
+                  style={{ height: "100%", width: "100%" }}
+                  className="rounded-lg"
+                  ref={mapRef}
+                >
+                  <TileLayer
+                    url={tileLayers[currentTileLayer].url}
+                    attribution={tileLayers[currentTileLayer].attribution}
+                  />
+                  <MapClickHandler setClickedPosition={setClickedPosition} assessRisk={assessRisk} />
+
+                  {clickedPosition && (
+                    <Marker position={clickedPosition}>
+                      <Popup>
+                        <div className="w-64">
+                          {isLoading ? (
+                            <div className="flex items-center justify-center p-4">
+                              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                            </div>
+                          ) : assessment ? (
+                            <div className="space-y-2">
+                              <h3 className="font-bold flex items-center gap-2">
+                                <RiskIcon risk={assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} className="h-5 w-5" />
+                                 Risk Assessment
+                              </h3>
+                              <div className="text-center">
+                                <p className="text-3xl font-bold">{assessment.riskPercentage}%</p>
+                                <Badge variant={riskBadgeVariant(assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low')}>
+                                  {assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} Risk
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground">{assessment.analysis}</p>
+                            </div>
+                          ) : (
+                            <p>Click on the map to assess risk.</p>
+                          )}
+                        </div>
+                      </Popup>
+                    </Marker>
+                  )}
+                </MapContainer>
             </div>
           </div>
           <div className="lg:col-span-1">
