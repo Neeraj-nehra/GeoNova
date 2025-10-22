@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -15,7 +16,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   AuthError,
-  AuthErrorCodes,
 } from "firebase/auth";
 
 
@@ -41,7 +41,7 @@ export function LoginForm() {
       });
       router.push("/dashboard");
     } catch (err: any) {
-      if (err.code === AuthErrorCodes.USER_DELETED) {
+      if (err.code === 'auth/user-not-found') {
          try {
             await createUserWithEmailAndPassword(auth, email, password);
             toast({
@@ -50,10 +50,12 @@ export function LoginForm() {
             });
             router.push("/dashboard");
          } catch (signUpError: any) {
-            setError(`Failed to sign up: ${signUpError.message}`);
+            const authError = signUpError as AuthError;
+            setError(`Failed to sign up: ${authError.message}`);
          }
       } else {
-        setError(`Failed to sign in: ${err.message}`);
+        const authError = err as AuthError;
+        setError(`Failed to sign in: ${authError.message}`);
       }
     } finally {
         setIsLoading(false);

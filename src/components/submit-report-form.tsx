@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -23,8 +24,7 @@ import { useState } from "react";
 import { useFirestore, useStorage, useUser } from "@/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 const formSchema = z.object({
   latitude: z.string().min(1, "Latitude is required"),
@@ -55,7 +55,7 @@ export function SubmitReportForm() {
   });
 
   async function onSubmit(values: FormData) {
-    if (!user) {
+    if (!user || !firestore) {
         toast({
             variant: "destructive",
             title: "Authentication Error",
@@ -65,50 +65,62 @@ export function SubmitReportForm() {
     }
 
     setIsSubmitting(true);
+    
+    // Optimistically show success toast
+    toast({
+      title: "Report Submitted",
+      description: "Thank you for your submission. It's being processed.",
+    });
+
     try {
         let photoUrl = "";
         const photoFile = values.photo?.[0];
 
-        const landslidePointsCollection = collection(firestore, "landslidePoints");
-        const newReportRef = (await addDoc(landslidePointsCollection, {})).id;
-        
-        if (photoFile) {
-            const storageRef = ref(storage, `reports/${user.uid}/${newReportRef}/${photoFile.name}`);
-            const uploadResult = await uploadBytes(storageRef, photoFile);
-            photoUrl = await getDownloadURL(uploadResult.ref);
-        }
+        // The logic to upload photo and then add doc needs to remain async, 
+        // but we don't block the UI for it.
+        const processSubmission = async () => {
+            const landslidePointsCollection = collection(firestore, "landslidePoints");
+            
+            // Create a placeholder doc to get an ID for storage path
+            const newReportRef = await addDoc(landslidePointsCollection, {});
+            
+            if (photoFile) {
+                const storageRef = ref(storage, `reports/${user.uid}/${newReportRef.id}/${photoFile.name}`);
+                const uploadResult = await uploadBytes(storageRef, photoFile);
+                photoUrl = await getDownloadURL(uploadResult.ref);
+            }
 
-        const landslidePointData = {
-          locationLatitude: parseFloat(values.latitude),
-          locationLongitude: parseFloat(values.longitude),
-          description: values.description,
-          severity: values.severity,
-          source: "user-report",
-          userId: user.uid,
-          createdAt: serverTimestamp(),
-          photoUrl: photoUrl,
+            const landslidePointData = {
+              locationLatitude: parseFloat(values.latitude),
+              locationLongitude: parseFloat(values.longitude),
+              description: values.description,
+              severity: values.severity,
+              source: "user-report",
+              userId: user.uid,
+              createdAt: serverTimestamp(),
+              photoUrl: photoUrl,
+              id: newReportRef.id,
+            };
+
+            // Use non-blocking update
+            addDocumentNonBlocking(landslidePointsCollection, landslidePointData);
         };
 
-        const docRef = (await addDoc(landslidePointsCollection, landslidePointData));
-
-        docRef.catch(error => {
-          errorEmitter.emit(
-            'permission-error',
-            new FirestorePermissionError({
-              path: `landslidePoints/${docRef.id}`,
-              operation: 'create',
-              requestResourceData: landslidePointData,
-            })
-          )
+        processSubmission().catch(error => {
+            console.error("Error submitting report in background: ", error);
+            // Optionally, show a failure toast here if needed
+             toast({
+                variant: "destructive",
+                title: "Background Submission Failed",
+                description: "There was an issue saving your report. Please try again.",
+            });
         });
 
-      toast({
-        title: "Report Submitted Successfully",
-        description: "Thank you for contributing to the safety of our community.",
-      });
       form.reset();
     } catch (error: any) {
-        console.error("Error submitting report: ", error);
+        // This catch block might now be less likely to be hit, 
+        // but kept for safety.
+        console.error("Error initiating report submission: ", error);
         toast({
             variant: "destructive",
             title: "Submission Failed",
