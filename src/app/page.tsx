@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Mountain, MoveDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -57,11 +58,19 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 overflow-hidden">
+           <Image
+            src="https://picsum.photos/seed/green-mountains/1920/1080"
+            alt="Mountain background"
+            fill
+            className="object-cover -z-10"
+            data-ai-hint="green mountains"
+          />
+          <div className="absolute inset-0 bg-black/30 -z-10"></div>
           <div className="relative z-10">
-            <h1 className="text-4xl md:text-7xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-7xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-white to-gray-300 bg-clip-text text-transparent">
               Guardians of the Slopes
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-muted-foreground animate-fade-in-up animation-delay-300">
+            <p className="mt-4 max-w-2xl text-lg text-gray-200 animate-fade-in-up animation-delay-300">
               Leveraging AI and real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
             </p>
             <div className="mt-8 animate-fade-in-up animation-delay-600">
@@ -70,7 +79,7 @@ export default function Home() {
               </Button>
             </div>
              <div className="absolute bottom-[-8rem] left-1/2 -translate-x-1/2 animate-bounce mt-8">
-              <MoveDown className="h-6 w-6 text-muted-foreground/70" />
+              <MoveDown className="h-6 w-6 text-gray-400/70" />
             </div>
           </div>
         </section>
