@@ -28,6 +28,7 @@ import {
   Mountain,
   UserCircle,
   BarChart,
+  Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ const navItems = [
   { href: "/dashboard/submit-report", icon: FilePlus, label: "Submit Report" },
   { href: "/dashboard/early-warning", icon: Siren, label: "Early Warning" },
   { href: "/dashboard/real-time-risk", icon: BarChart, label: "Real-time Risk" },
+  { href: "/dashboard/news", icon: Newspaper, label: "News" },
 ];
 
 export function SidebarNav() {

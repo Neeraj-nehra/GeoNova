@@ -1,0 +1,94 @@
+{
+  "entities": {
+    "Report": {
+      "title": "Report",
+      "description": "A user-submitted report about a landslide observation.",
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "The latitude of the observation."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude of the observation."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the observation."
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["Low", "Medium", "High"],
+          "description": "The assessed severity of the event."
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "URL of an uploaded photo."
+        },
+        "userId": {
+            "type": "string",
+            "description": "The ID of the user who submitted the report."
+        },
+        "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the report was created."
+        }
+      },
+      "required": ["latitude", "longitude", "description", "severity", "userId", "createdAt"]
+    },
+    "Warning": {
+      "title": "Warning",
+      "description": "An early warning alert for a specific zone.",
+      "type": "object",
+      "properties": {
+        "zone": {
+          "type": "string",
+          "description": "The geographical zone for the warning."
+        },
+        "risk": {
+          "type": "string",
+          "enum": ["Low", "Medium", "High"],
+          "description": "The risk level of the warning."
+        },
+        "details": {
+          "type": "string",
+          "description": "Details and recommendations for the warning."
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the warning was issued."
+        },
+        "isActive": {
+            "type": "boolean",
+            "description": "Whether the warning is currently active."
+        },
+        "resolvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the warning was resolved."
+        }
+      },
+      "required": ["zone", "risk", "details", "issuedAt", "isActive"]
+    }
+  },
+  "auth": {
+    "providers": ["password"]
+  },
+  "firestore": {
+    "/reports/{reportId}": {
+      "schema": {
+        "$ref": "#/entities/Report"
+      },
+      "description": "Collection of all user-submitted reports."
+    },
+    "/warnings/{warningId}": {
+      "schema": {
+        "$ref": "#/entities/Warning"
+      },
+      "description": "Collection of all early warnings."
+    }
+  }
+}

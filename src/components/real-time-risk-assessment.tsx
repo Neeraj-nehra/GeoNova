@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { getLandslideRiskAssessment } from "@/lib/actions";
-import { AlertCircle, BarChart, CheckCircle, Info, Loader2, MapPin, Shield, ShieldAlert, ShieldCheck, Siren } from "lucide-react";
+import { assessLandslideRisk } from "@/ai/flows/real-time-landslide-risk";
 import type { LandslideRiskOutput } from "@/ai/flows/real-time-landslide-risk";
+import { AlertCircle, BarChart, CheckCircle, Info, Loader2, MapPin, Shield, ShieldAlert, ShieldCheck, Siren } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
@@ -46,11 +46,13 @@ export function RealTimeRiskAssessment() {
     setIsLoading(true);
     setError(null);
     setAssessment(null);
-    const result = await getLandslideRiskAssessment(data);
-    if (result.error) {
-      setError(result.error);
-    } else {
-      setAssessment(result.data);
+    try {
+      const result = await assessLandslideRisk(data);
+      setAssessment(result);
+    } catch (e: any) {
+      console.error("Error in getLandslideRiskAssessment action:", e);
+      const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
+      setError(`Failed to get risk assessment: ${errorMessage}`);
     }
     setIsLoading(false);
   };
