@@ -18,6 +18,9 @@ import {
   sendPasswordResetEmail,
   AuthError,
   updateProfile,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +37,7 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [resetSent, setResetSent] = useState(false);
@@ -87,6 +91,7 @@ export function LoginForm() {
     } else {
       // Handle Sign In
       try {
+        await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
         await signInWithEmailAndPassword(auth, email, password);
         toast({
           title: "Login Successful",
@@ -239,7 +244,11 @@ export function LoginForm() {
                 {!isSigningUp && (
                 <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                        <Checkbox id="remember-me" className="border-white/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"/>
+                        <Checkbox 
+                            id="remember-me"
+                            checked={rememberMe}
+                            onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                            className="border-white/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"/>
                         <Label htmlFor="remember-me" className="text-white/80 font-normal">Remember me</Label>
                     </div>
                     <button type="button" onClick={() => setAuthState('forgotPassword')} className="text-white/80 hover:text-white hover:underline">
@@ -273,4 +282,5 @@ export function LoginForm() {
   );
 }
 
+    
     
