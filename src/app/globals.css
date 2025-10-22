@@ -4,31 +4,31 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 224 71% 4%;
-    --card: 210 40% 100%;
-    --card-foreground: 224 71% 4%;
-    --popover: 210 40% 100%;
-    --popover-foreground: 224 71% 4%;
-    --primary: 160 70% 40%;
-    --primary-foreground: 160 100% 98%;
+    --background: 220 20% 12%; /* Dark Cool Gray */
+    --foreground: 210 40% 98%; /* Light Gray */
+    --card: 220 20% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 20% 15%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 45 85% 60%; /* Golden Yellow */
+    --primary-foreground: 220 20% 10%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 224 71% 4%;
-    --muted: 210 40% 96.1%;
+    --muted: 220 20% 20%;
     --muted-foreground: 215 20% 65.1%;
-    --accent: 221 83% 53%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 45 85% 60%;
+    --accent-foreground: 220 20% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
-    --chart-1: 160 70% 40%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
+    --border: 220 20% 25%;
+    --input: 220 20% 25%;
+    --ring: 45 85% 60%;
+    --chart-1: 45 85% 60%;
+    --chart-2: 45 85% 70%;
+    --chart-3: 45 85% 80%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     
     /* Custom Sidebar vars to align with gradient theme */
     --sidebar-background: 175 57% 18%; /* Dark Teal */
@@ -48,19 +48,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 222 84% 5%;
     --popover-foreground: 210 40% 98%;
-    --primary: 160 70% 45%;
-    --primary-foreground: 160 100% 98%;
+    --primary: 45 85% 60%;
+    --primary-foreground: 220 20% 10%;
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-    --accent: 221 83% 53%;
+    --accent: 45 85% 60%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 17%;
     --input: 217 33% 17%;
-    --ring: 221 83% 53%;
+    --ring: 45 85% 60%;
     
     --sidebar-background: 175 57% 18%;
     --sidebar-foreground: 180 10% 85%;
@@ -81,7 +81,7 @@
     @apply bg-background text-foreground;
   }
   .gradient-text {
-    @apply bg-gradient-to-r from-primary to-teal-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent;
   }
 }
 
