@@ -48,15 +48,6 @@ export default function Home() {
             </div>
           </header>
           
-          <Image
-            src="https://picsum.photos/seed/green-mountains/1920/1080"
-            alt="Hero background"
-            fill
-            className="object-cover -z-10"
-            data-ai-hint="green mountains"
-          />
-          <div className="absolute inset-0 bg-black/50 -z-10"></div>
-
           <div className="relative z-10 px-4">
             <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
               Guardians of the Slopes
