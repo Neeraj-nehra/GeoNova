@@ -50,9 +50,13 @@ export function LoginForm() {
       <div className="glass-card rounded-2xl shadow-2xl overflow-hidden">
         <div className="p-8 text-white">
           <div className="mb-8 text-center">
-             <div className="inline-block bg-blue-600 px-4 py-2 rounded-md mb-4">
-                 <h2 className="text-2xl font-bold text-white">Login</h2>
-             </div>
+            <Link href="/" className="flex items-center justify-center gap-2 text-white mb-4">
+              <div className="bg-white/20 p-2 rounded-lg">
+                <Mountain className="h-6 w-6" />
+              </div>
+              <span className="text-xl font-bold font-headline">GeoNova</span>
+            </Link>
+            <h2 className="text-2xl font-bold">Login to your account</h2>
           </div>
         
           <form onSubmit={handleLogin} className="space-y-6">
@@ -66,7 +70,7 @@ export function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                className="bg-black/20 border-white/20 rounded-full pl-10 text-white placeholder:text-white/50 focus:ring-offset-0 focus:ring-white/50"
+                className="bg-black/20 border-white/20 rounded-full pl-10 text-white placeholder:text-white/50 focus:ring-offset-0 focus:ring-white/50 h-12"
               />
             </div>
             <div className="relative">
@@ -79,36 +83,36 @@ export function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
-                className="bg-black/20 border-white/20 rounded-full pl-10 text-white placeholder:text-white/50 focus:ring-offset-0 focus:ring-white/50"
+                className="bg-black/20 border-white/20 rounded-full pl-10 text-white placeholder:text-white/50 focus:ring-offset-0 focus:ring-white/50 h-12"
               />
             </div>
             
             {error && (
-              <p className="text-sm font-medium text-red-400">{error}</p>
+              <p className="text-sm font-medium text-red-400 text-center">{error}</p>
             )}
 
             <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                    <Checkbox id="remember-me" className="border-white/50 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"/>
+                    <Checkbox id="remember-me" className="border-white/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"/>
                     <Label htmlFor="remember-me" className="text-white/80 font-normal">Remember me</Label>
                 </div>
                 <Link href="#" className="text-white/80 hover:text-white hover:underline">
-                    Forgot password
+                    Forgot password?
                 </Link>
             </div>
 
             <Button 
                 type="submit" 
-                className="w-full bg-white text-slate-800 hover:bg-white/90 rounded-full text-base font-bold h-12" 
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-full text-base font-bold h-12 transition-all duration-300 transform hover:scale-105" 
                 disabled={isLoading}
             >
-              {isLoading ? <Loader2 className="animate-spin" /> : "Login"}
+              {isLoading ? <Loader2 className="animate-spin" /> : "Sign In"}
             </Button>
             
             <p className="text-center text-xs text-white/60">
               Don't have an account?{" "}
               <Link href="#" className="font-semibold text-white/80 hover:text-white hover:underline">
-                Register
+                Sign up
               </Link>
             </p>
 
@@ -119,7 +123,7 @@ export function LoginForm() {
           <Info className="h-4 w-4 text-white/80" />
           <AlertTitle className="text-white/90">Demo Credentials</AlertTitle>
           <AlertDescription className="text-white/70">
-            Use <span className="font-semibold text-white">demo@geonova.com</span> and password{" "}
+            Use <span className="font-semibold text-white">demo@geonova.com</span> with password{" "}
             <span className="font-semibold text-white">demo123</span>.
           </AlertDescription>
         </Alert>
