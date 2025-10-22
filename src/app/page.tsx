@@ -124,16 +124,16 @@ export default function Home() {
               <Mountain className="h-6 w-6 text-primary" />
               <h3 className="text-2xl font-bold font-headline">GeoNova</h3>
             </div>
-            <p className="text-sm text-muted-foreground mt-2 mb-4">Built by The GeoNova Team: Neeraj Kumar , Mohan Ingale, Lakshay Meena</p>
-            <p className="max-w-xl mx-auto text-muted-foreground mb-8">
-              Stay connected with our mission to safeguard communities through technology and data.
+            
+            <p className="max-w-xl mx-auto text-muted-foreground my-8">
+              Stay connected with our mission to safeguard communities through technology and data. For any help or inquiries, feel free to contact us.
             </p>
             <div className="flex flex-col items-center gap-6 mb-8">
                 <div className="flex gap-6">
                     <a href="https://www.linkedin.com/in/neeraj-kumar-8790b3324?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="h-6 w-6" /></a>
                     <a href="mailto:neeraj_k@ce.iitr.ac.in" className="text-muted-foreground hover:text-primary transition-colors"><Mail className="h-6 w-6" /></a>
                 </div>
-                <p className="text-sm text-muted-foreground">For any help or inquiries, feel free to contact us.</p>
+                <p className="text-sm text-muted-foreground">Built by The GeoNova Team: Neeraj Kumar , Mohan Ingale, Lakshay Meena</p>
             </div>
             <div className="text-sm text-muted-foreground space-y-2">
               <p>&copy; {new Date().getFullYear()} GeoNova. All rights reserved.</p>
