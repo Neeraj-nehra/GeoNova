@@ -100,11 +100,9 @@ export default function Home() {
             <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
                 <div className="glass-card rounded-2xl p-8 text-white h-80 flex flex-col justify-center">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
-                    <div className="space-y-4 text-sm text-white/80">
-                        <p>
-                            GeoNova Landslide Guardian is a data-driven application built to monitor, assess, and reduce the risks of landslides, with a focus on the vulnerable terrain of Uttarakhand, India. It empowers local residents, policymakers, and researchers to stay informed and make proactive safety decisions.
-                        </p>
-                    </div>
+                    <p className="text-sm text-white/80">
+                        GeoNova Landslide Guardian is a data-driven application built to monitor, assess, and reduce the risks of landslides, with a focus on the vulnerable terrain of Uttarakhand, India. It empowers local residents, policymakers, and researchers to stay informed and make proactive safety decisions.
+                    </p>
                 </div>
                 <div className="relative h-80 rounded-lg overflow-hidden shadow-xl">
                    <Image
@@ -122,10 +120,11 @@ export default function Home() {
       {/* Footer */}
       <footer id="contact" className="bg-background/80 backdrop-blur-sm border-t border-border/50 py-12">
           <div className="container mx-auto px-4 text-center">
-            <div className="flex justify-center items-center gap-2 mb-4">
+            <div className="flex justify-center items-center gap-2">
               <Mountain className="h-6 w-6 text-primary" />
               <h3 className="text-2xl font-bold font-headline">GeoNova</h3>
             </div>
+            <p className="text-sm text-muted-foreground mt-2 mb-4">Built by The GeoNova Team: Neeraj Kumar , Mohan Ingale, Lakshay Meena</p>
             <p className="max-w-xl mx-auto text-muted-foreground mb-8">
               Stay connected with our mission to safeguard communities through technology and data.
             </p>
@@ -136,7 +135,6 @@ export default function Home() {
             <div className="text-sm text-muted-foreground space-y-2">
               <p>For any help or inquiries, feel free to contact us.</p>
               <p>&copy; {new Date().getFullYear()} GeoNova. All rights reserved.</p>
-              <p>Built by The GeoNova Team: Neeraj Kumar , Mohan Ingale, Lakshay Meena</p>
             </div>
           </div>
       </footer>
