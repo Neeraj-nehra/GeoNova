@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { BarChart, Map, Mountain, Siren, FileText, Users, Mail, Twitter, Linkedin, Github } from "lucide-react";
+import { BarChart, Map, Mountain, Siren, FileText, Users, Mail, Twitter, Linkedin, Github, MoveDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -69,6 +69,11 @@ export default function Home() {
                 <Link href="/login">Get Started</Link>
               </Button>
             </div>
+          </div>
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+            <a href="#features">
+                <MoveDown className="h-8 w-8 text-white/70" />
+            </a>
           </div>
         </section>
 
