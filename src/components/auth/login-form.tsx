@@ -14,6 +14,7 @@ import { useAuth } from "@/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  AuthError,
   AuthErrorCodes,
 } from "firebase/auth";
 
@@ -40,7 +41,7 @@ export function LoginForm() {
       });
       router.push("/dashboard");
     } catch (err: any) {
-      if (err.code === AuthErrorCodes.INVALID_credential) {
+      if (err.code === AuthErrorCodes.USER_DELETED) {
          try {
             await createUserWithEmailAndPassword(auth, email, password);
             toast({
