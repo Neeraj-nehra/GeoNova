@@ -1,8 +1,8 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import React, { useState, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import React, { useState, useRef, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,16 +53,6 @@ const tileLayers = {
   },
 };
 
-function MapClickHandler({ setClickedPosition, assessRisk }: { setClickedPosition: (pos: L.LatLng) => void, assessRisk: (pos: L.LatLng) => void }) {
-  useMapEvents({
-    click(e) {
-      setClickedPosition(e.latlng);
-      assessRisk(e.latlng);
-    },
-  });
-  return null;
-}
-
 const RiskIcon = ({ risk, className }: { risk: string, className?: string }) => {
   const riskLower = risk.toLowerCase();
   if (riskLower === 'high') return <ShieldAlert className={className} />;
@@ -77,18 +67,35 @@ const riskBadgeVariant = (risk: string) : "destructive" | "secondary" | "default
         case 'low': return 'default';
         default: return 'default';
     }
-  }
+}
+
+function MapEvents({ onMapClick, flyTo }: { onMapClick: (latLng: L.LatLng) => void, flyTo: L.LatLng | null }) {
+    const map = useMap();
+    
+    useEffect(() => {
+        if(flyTo) {
+            map.flyTo(flyTo, 12);
+        }
+    }, [flyTo, map]);
+
+    map.on('click', (e) => {
+        onMapClick(e.latlng);
+    });
+
+    return null;
+}
 
 
 export default function InteractiveMap() {
-  const mapRef = React.useRef<L.Map>(null);
   const [clickedPosition, setClickedPosition] = useState<L.LatLng | null>(null);
   const [currentTileLayer, setCurrentTileLayer] = useState<keyof typeof tileLayers>('default');
   const [isLoading, setIsLoading] = useState(false);
   const [assessment, setAssessment] = useState<MapRiskAssessmentOutput | null>(null);
+  const [flyTo, setFlyTo] = useState<L.LatLng | null>(null);
 
   const assessRisk = async (pos: L.LatLng) => {
     setIsLoading(true);
+    setClickedPosition(pos);
     setAssessment(null);
     try {
       const result = await assessMapRisk({ latitude: pos.lat, longitude: pos.lng });
@@ -101,9 +108,7 @@ export default function InteractiveMap() {
   };
 
   const handleDistrictSelect = (center: [number, number]) => {
-    if (mapRef.current) {
-      mapRef.current.flyTo(center, 12);
-    }
+    setFlyTo(L.latLng(center[0], center[1]));
   };
 
   return (
@@ -153,13 +158,13 @@ export default function InteractiveMap() {
                   zoom={8}
                   style={{ height: "100%", width: "100%" }}
                   className="rounded-lg"
-                  ref={mapRef}
                 >
                   <TileLayer
                     url={tileLayers[currentTileLayer].url}
                     attribution={tileLayers[currentTileLayer].attribution}
+                    key={currentTileLayer}
                   />
-                  <MapClickHandler setClickedPosition={setClickedPosition} assessRisk={assessRisk} />
+                  <MapEvents onMapClick={assessRisk} flyTo={flyTo} />
 
                   {clickedPosition && (
                     <Marker position={clickedPosition}>
