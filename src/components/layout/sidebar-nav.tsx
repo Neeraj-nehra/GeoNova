@@ -29,6 +29,7 @@ import {
   UserCircle,
   BarChart,
   Newspaper,
+  Database,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth, useUser } from "@/firebase";
@@ -41,6 +42,7 @@ const navItems = [
   { href: "/dashboard/early-warning", icon: Siren, label: "Early Warning" },
   { href: "/dashboard/real-time-risk", icon: BarChart, label: "Real-time Risk" },
   { href: "/dashboard/news", icon: Newspaper, label: "News" },
+  { href: "/dashboard/data-explorer", icon: Database, label: "Data Explorer" },
 ];
 
 export function SidebarNav() {
