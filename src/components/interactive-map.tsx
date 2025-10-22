@@ -1,7 +1,7 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { Filter, Layers, Loader2, Pin, ShieldAlert, ShieldCheck, Shield } from "
 import { Badge } from "@/components/ui/badge";
 import { assessMapRisk } from "@/ai/flows/map-risk-assessment";
 import type { MapRiskAssessmentOutput } from "@/ai/flows/map-risk-assessment";
+import { Marker as MarkerType } from 'leaflet';
+
 
 // Fix for default icon path issue with Webpack
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -74,6 +76,7 @@ function MapController({ flyTo }: { flyTo: L.LatLng | null }) {
     const [clickedPosition, setClickedPosition] = useState<L.LatLng | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [assessment, setAssessment] = useState<MapRiskAssessmentOutput | null>(null);
+    const markerRef = useRef<MarkerType>(null);
     
     useEffect(() => {
         if(flyTo) {
@@ -96,6 +99,12 @@ function MapController({ flyTo }: { flyTo: L.LatLng | null }) {
     };
 
     useEffect(() => {
+      if (!isLoading && assessment && markerRef.current) {
+        markerRef.current.openPopup();
+      }
+    }, [isLoading, assessment]);
+
+    useEffect(() => {
       const onMapClick = (e: L.LeafletMouseEvent) => {
         assessRisk(e.latlng);
       };
@@ -106,7 +115,7 @@ function MapController({ flyTo }: { flyTo: L.LatLng | null }) {
     }, [map]);
 
     return clickedPosition ? (
-      <Marker position={clickedPosition}>
+      <Marker position={clickedPosition} ref={markerRef}>
         <Popup>
           <div className="w-64">
             {isLoading ? (
