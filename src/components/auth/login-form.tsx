@@ -41,7 +41,8 @@ export function LoginForm() {
       });
       router.push("/dashboard");
     } catch (err: any) {
-      if (err.code === 'auth/user-not-found') {
+      // If user is not found, create a new account
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
          try {
             await createUserWithEmailAndPassword(auth, email, password);
             toast({
@@ -50,8 +51,12 @@ export function LoginForm() {
             });
             router.push("/dashboard");
          } catch (signUpError: any) {
-            const authError = signUpError as AuthError;
-            setError(`Failed to sign up: ${authError.message}`);
+             if (signUpError.code === 'auth/email-already-in-use') {
+                setError("Invalid credentials. Please check your email and password.");
+             } else {
+                const authError = signUpError as AuthError;
+                setError(`Failed to sign up: ${authError.message}`);
+             }
          }
       } else {
         const authError = err as AuthError;
