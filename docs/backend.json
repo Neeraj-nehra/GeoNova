@@ -1,94 +1,376 @@
 {
   "entities": {
-    "Report": {
-      "title": "Report",
-      "description": "A user-submitted report about a landslide observation.",
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
       "type": "object",
+      "description": "Represents a user of the GeoNova system.",
       "properties": {
-        "latitude": {
-          "type": "number",
-          "description": "The latitude of the observation."
-        },
-        "longitude": {
-          "type": "number",
-          "description": "The longitude of the observation."
-        },
-        "description": {
+        "id": {
           "type": "string",
-          "description": "A description of the observation."
+          "description": "Unique identifier for the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "The full name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the user (e.g., user, admin)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The date and time when the user account was created.",
+          "format": "date-time"
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "The date and time of the user's last login.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "role",
+        "createdAt"
+      ]
+    },
+    "LandslidePoint": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LandslidePoint",
+      "type": "object",
+      "description": "Represents a single landslide observation point.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the landslide point."
+        },
+        "locationLongitude": {
+          "type": "number",
+          "description": "Longitude of the landslide location."
+        },
+        "locationLatitude": {
+          "type": "number",
+          "description": "Latitude of the landslide location."
+        },
+        "region": {
+          "type": "string",
+          "description": "The region where the landslide occurred."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date when the landslide was observed.",
+          "format": "date-time"
         },
         "severity": {
           "type": "string",
-          "enum": ["Low", "Medium", "High"],
-          "description": "The assessed severity of the event."
+          "description": "The severity level of the landslide (low, medium, high)."
         },
-        "photoUrl": {
+        "affectedArea": {
+          "type": "number",
+          "description": "The area affected by the landslide (in square meters)."
+        },
+        "verified": {
+          "type": "boolean",
+          "description": "Indicates whether the landslide observation has been verified."
+        },
+        "source": {
           "type": "string",
-          "description": "URL of an uploaded photo."
+          "description": "The source of the landslide observation (e.g., user report, satellite data)."
         },
-        "userId": {
-            "type": "string",
-            "description": "The ID of the user who submitted the report."
-        },
-        "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The timestamp when the report was created."
+        "description": {
+          "type": "string",
+          "description": "A description of the landslide event."
         }
       },
-      "required": ["latitude", "longitude", "description", "severity", "userId", "createdAt"]
+      "required": [
+        "id",
+        "locationLongitude",
+        "locationLatitude",
+        "region",
+        "date",
+        "severity"
+      ]
     },
-    "Warning": {
-      "title": "Warning",
-      "description": "An early warning alert for a specific zone.",
+    "Zone": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Zone",
       "type": "object",
+      "description": "Represents a geographical zone monitored for landslide risk.",
       "properties": {
-        "zone": {
+        "id": {
           "type": "string",
-          "description": "The geographical zone for the warning."
+          "description": "Unique identifier for the zone."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the zone."
+        },
+        "riskLevel": {
+          "type": "string",
+          "description": "The risk level associated with the zone."
+        },
+        "geometry": {
+          "type": "string",
+          "description": "Polygon coordinates representing the zone's geometry (e.g., GeoJSON string)."
+        },
+        "slopeAngle": {
+          "type": "number",
+          "description": "The average slope angle within the zone."
+        },
+        "soilType": {
+          "type": "string",
+          "description": "The type of soil found within the zone."
+        },
+        "vegetationCover": {
+          "type": "number",
+          "description": "The percentage of vegetation cover within the zone."
+        },
+        "monitoringSensors": {
+          "type": "number",
+          "description": "The number of monitoring sensors deployed within the zone."
+        },
+        "historicalDataIds": {
+          "type": "array",
+          "description": "References to EnvironmentalData entries. (Relationship: Zone 1:N EnvironmentalData)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "riskLevel",
+        "geometry"
+      ]
+    },
+    "Alert": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Alert",
+      "type": "object",
+      "description": "Represents an alert triggered by landslide risk assessment.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the alert."
+        },
+        "zoneId": {
+          "type": "string",
+          "description": "Reference to Zone. (Relationship: Zone 1:N Alert)"
         },
         "risk": {
           "type": "string",
-          "enum": ["Low", "Medium", "High"],
-          "description": "The risk level of the warning."
+          "description": "The risk level associated with the alert (high, medium, low)."
         },
-        "details": {
+        "locationLongitude": {
+          "type": "number",
+          "description": "Longitude of the alert location."
+        },
+        "locationLatitude": {
+          "type": "number",
+          "description": "Latitude of the alert location."
+        },
+        "status": {
           "type": "string",
-          "description": "Details and recommendations for the warning."
+          "description": "The status of the alert (active, resolved)."
         },
-        "issuedAt": {
+        "description": {
           "type": "string",
-          "format": "date-time",
-          "description": "The timestamp when the warning was issued."
+          "description": "A description of the alert."
         },
-        "isActive": {
-            "type": "boolean",
-            "description": "Whether the warning is currently active."
+        "affectedPopulation": {
+          "type": "number",
+          "description": "The estimated number of people affected by the potential landslide."
         },
-        "resolvedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The timestamp when the warning was resolved."
+        "environmentalDataId": {
+          "type": "string",
+          "description": "Reference to EnvironmentalData. (Relationship: EnvironmentalData 1:N Alert)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The date and time when the alert was created.",
+          "format": "date-time"
         }
       },
-      "required": ["zone", "risk", "details", "issuedAt", "isActive"]
+      "required": [
+        "id",
+        "zoneId",
+        "risk",
+        "locationLongitude",
+        "locationLatitude",
+        "status",
+        "createdAt"
+      ]
+    },
+    "EnvironmentalData": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "EnvironmentalData",
+      "type": "object",
+      "description": "Represents environmental data collected at a specific location and time.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the environmental data record."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The timestamp when the data was recorded.",
+          "format": "date-time"
+        },
+        "locationLongitude": {
+          "type": "number",
+          "description": "Longitude of the data collection point."
+        },
+        "locationLatitude": {
+          "type": "number",
+          "description": "Latitude of the data collection point."
+        },
+        "rainfall24h": {
+          "type": "number",
+          "description": "Rainfall in the last 24 hours (in millimeters)."
+        },
+        "soilMoisture": {
+          "type": "number",
+          "description": "Soil moisture level (percentage)."
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Temperature (in degrees Celsius)."
+        },
+        "ndvi": {
+          "type": "number",
+          "description": "Normalized Difference Vegetation Index."
+        },
+        "slope": {
+          "type": "number",
+          "description": "Slope angle (in degrees)."
+        }
+      },
+      "required": [
+        "id",
+        "timestamp",
+        "locationLongitude",
+        "locationLatitude"
+      ]
     }
   },
   "auth": {
-    "providers": ["password"]
+    "providers": [
+      "password",
+      "anonymous"
+    ]
   },
   "firestore": {
-    "/reports/{reportId}": {
-      "schema": {
-        "$ref": "#/entities/Report"
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles.  Access is restricted to the user themselves. 'userId' is derived from request.auth.uid.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
       },
-      "description": "Collection of all user-submitted reports."
-    },
-    "/warnings/{warningId}": {
-      "schema": {
-        "$ref": "#/entities/Warning"
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Manages admin roles. If a document exists for a user ID, that user has admin privileges.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user who has admin role."
+            }
+          ]
+        }
       },
-      "description": "Collection of all early warnings."
-    }
+      {
+        "path": "/landslidePoints/{landslidePointId}",
+        "definition": {
+          "entityName": "LandslidePoint",
+          "schema": {
+            "$ref": "#/backend/entities/LandslidePoint"
+          },
+          "description": "Stores landslide observation points.",
+          "params": [
+            {
+              "name": "landslidePointId",
+              "description": "The unique identifier for the landslide point."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/zones/{zoneId}",
+        "definition": {
+          "entityName": "Zone",
+          "schema": {
+            "$ref": "#/backend/entities/Zone"
+          },
+          "description": "Stores geographical zones monitored for landslide risk.",
+          "params": [
+            {
+              "name": "zoneId",
+              "description": "The unique identifier for the zone."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/zones/{zoneId}/alerts/{alertId}",
+        "definition": {
+          "entityName": "Alert",
+          "schema": {
+            "$ref": "#/backend/entities/Alert"
+          },
+          "description": "Stores alerts associated with specific zones. Includes denormalized risk levels from the zone for authorization independence.",
+          "params": [
+            {
+              "name": "zoneId",
+              "description": "The unique identifier for the zone."
+            },
+            {
+              "name": "alertId",
+              "description": "The unique identifier for the alert."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/environmentalData/{environmentalDataId}",
+        "definition": {
+          "entityName": "EnvironmentalData",
+          "schema": {
+            "$ref": "#/backend/entities/EnvironmentalData"
+          },
+          "description": "Stores environmental data records. Publicly readable.",
+          "params": [
+            {
+              "name": "environmentalDataId",
+              "description": "The unique identifier for the environmental data record."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to ensure authorization independence, clarity, and scalability for the GeoNova Landslide Guardian system.  Authorization Independence is achieved by denormalizing relevant authorization data (such as user roles or membership) into the documents where it's needed. This eliminates the need for `get()` calls in security rules, allowing for atomic operations and improved performance.\n\n**Explanation of Paths and Security Considerations:**\n\n*   **/users/{userId}**: This path stores user profiles. Access is restricted to the user themselves, ensuring privacy. The `userId` is derived from `request.auth.uid` for authentication.  This allows users to manage their profile and system preferences in settings and profile management.\n*   **/roles_admin/{userId}**:  This collection manages admin roles using document existence. If a document exists for a user ID in this collection, that user has admin privileges.  It simplifies checking for admin status in the rules without needing to read user documents. The early warning system will then be limited to the admin.\n*   **/landslidePoints/{landslidePointId}**: Stores landslide observation points.  Anyone can create, but the admin can make edits.\n*   **/zones/{zoneId}**: Stores geographical zones monitored for landslide risk. Access is controlled to ensure only authorized personnel can create and modify zone data.\n*   **/zones/{zoneId}/alerts/{alertId}**: Stores alerts associated with specific zones.  Includes denormalized risk levels from the zone for authorization independence. A zone can create multiple alerts. Environmental data IDs are stored for retrieval of environmental data.\n*   **/environmentalData/{environmentalDataId}**: Stores environmental data records. This data is read-only and publicly accessible because the data comes from satellites.\n\n**QAPs (Rules are not Filters):**\n\nThe structure facilitates secure `list` operations by segregating data based on access requirements. Publicly readable data (environmental data) is stored in a separate collection from user-specific data (user profiles). The Membership Map strategy used for collaborative data (if any) enables listing documents accessible to a user without filtering on the client side."
   }
 }
