@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -84,7 +85,7 @@ export default function DashboardPage() {
 
     return (
         <div className="animate-fade-in-up">
-            <PageHeader title="Dashboard" showRefresh />
+            <PageHeader title="Overview" showRefresh />
             
             <div className="mb-6">
                 <Alert className="bg-emerald-50 border-emerald-200">

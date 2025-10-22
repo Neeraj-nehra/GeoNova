@@ -18,9 +18,9 @@ export function StatCard({ title, value, trend, icon: Icon, color, isLoading = f
         <Card className={cn(
             "relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
             "text-white",
-            color
+            `bg-gradient-to-br ${color}`
         )}>
-            <div className={cn("absolute -right-4 -bottom-4 opacity-15", color)}>
+            <div className={cn("absolute -right-4 -bottom-4 opacity-15", `bg-gradient-to-br ${color}`)}>
                 <Icon className="h-32 w-32" />
             </div>
             <CardHeader>
