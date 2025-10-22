@@ -58,10 +58,10 @@ export default function Home() {
           
           <div className="relative z-10 px-4">
             <h1 className="text-4xl md:text-8xl font-bold font-headline tracking-tighter leading-tight animate-fade-in-up bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
-              Guardians of the Slopes
+              Predicting the Unstable Earth
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-white/80 animate-fade-in-up animation-delay-300">
-              Leveraging real-time data to predict, monitor, and mitigate landslide risks in the Uttarakhand region.
+            <p className="mt-4 max-w-2xl mx-auto text-lg text-white/80 animate-fade-in-up animation-delay-300">
+              Harnessing AI to forecast and mitigate landslide risks, protecting communities in the Uttarakhand region.
             </p>
             <div className="mt-8 animate-fade-in-up animation-delay-600">
               <Button asChild size="lg" className="rounded-full shadow-lg transition-transform transform hover:scale-105 active:scale-95 bg-primary text-primary-foreground hover:bg-primary/90">
@@ -98,7 +98,7 @@ export default function Home() {
         {/* About Section */}
         <section id="about" className="py-20 bg-transparent">
             <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
-                <div className="glass-card rounded-2xl p-8 text-white h-80">
+                <div className="glass-card rounded-2xl p-8 text-white h-80 flex flex-col justify-center">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">About GeoNova</h2>
                     <div className="space-y-4 text-sm text-white/80">
                         <p>
