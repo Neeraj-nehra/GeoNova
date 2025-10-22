@@ -1,3 +1,4 @@
+
 "use client";
 
 import "leaflet/dist/leaflet.css";
@@ -11,8 +12,7 @@ import { Filter, Layers, Loader2, Pin, ShieldAlert, ShieldCheck, Shield } from "
 import { Badge } from "@/components/ui/badge";
 import { assessMapRisk } from "@/ai/flows/map-risk-assessment";
 import type { MapRiskAssessmentOutput } from "@/ai/flows/map-risk-assessment";
-import { Marker as MarkerType } from 'leaflet';
-
+import { Marker as MarkerType, LatLng } from 'leaflet';
 
 // Fix for default icon path issue with Webpack
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -71,87 +71,109 @@ const riskBadgeVariant = (risk: string) : "destructive" | "secondary" | "default
     }
 }
 
-function MapController({ flyTo }: { flyTo: L.LatLng | null }) {
+function MapEvents({ 
+  onMapClick, 
+  clickedPosition, 
+  isLoading, 
+  assessment 
+}: { 
+  onMapClick: (latlng: LatLng) => void,
+  clickedPosition: LatLng | null,
+  isLoading: boolean,
+  assessment: MapRiskAssessmentOutput | null,
+}) {
     const map = useMap();
-    const [clickedPosition, setClickedPosition] = useState<L.LatLng | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [assessment, setAssessment] = useState<MapRiskAssessmentOutput | null>(null);
     const markerRef = useRef<MarkerType>(null);
     
+    useEffect(() => {
+        const handleMapClick = (e: L.LeafletMouseEvent) => {
+            onMapClick(e.latlng);
+        };
+        map.on('click', handleMapClick);
+        return () => {
+            map.off('click', handleMapClick);
+        };
+    }, [map, onMapClick]);
+
+    useEffect(() => {
+      if (markerRef.current && clickedPosition && (assessment || isLoading)) {
+        markerRef.current.openPopup();
+      }
+    }, [assessment, isLoading, clickedPosition]);
+
+    if (!clickedPosition) return null;
+    
+    return (
+        <Marker position={clickedPosition} ref={markerRef}>
+            <Popup>
+                <div className="w-64">
+                    {isLoading ? (
+                        <div className="flex items-center justify-center p-4">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                    ) : assessment ? (
+                        <div className="space-y-2">
+                            <h3 className="font-bold flex items-center gap-2">
+                                <RiskIcon risk={assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} className="h-5 w-5" />
+                                Risk Assessment
+                            </h3>
+                            <div className="text-center">
+                                <p className="text-3xl font-bold">{assessment.riskPercentage}%</p>
+                                <Badge variant={riskBadgeVariant(assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low')}>
+                                    {assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} Risk
+                                </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">{assessment.analysis}</p>
+                        </div>
+                    ) : (
+                        <p>No assessment available.</p>
+                    )}
+                </div>
+            </Popup>
+        </Marker>
+    );
+}
+
+function MapController({ flyTo }: { flyTo: L.LatLng | null }) {
+    const map = useMap();
     useEffect(() => {
         if(flyTo) {
             map.flyTo(flyTo, 12);
         }
     }, [flyTo, map]);
 
-    const assessRisk = async (pos: L.LatLng) => {
+    return null;
+}
+
+export default function InteractiveMap() {
+  const [currentTileLayer, setCurrentTileLayer] = useState<keyof typeof tileLayers>('default');
+  const [flyTo, setFlyTo] = useState<L.LatLng | null>(null);
+  const [assessment, setAssessment] = useState<MapRiskAssessmentOutput | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [clickedPosition, setClickedPosition] = useState<LatLng | null>(null);
+
+  const handleDistrictSelect = (center: [number, number]) => {
+    setFlyTo(L.latLng(center[0], center[1]));
+  };
+  
+  const handleMapClick = async (latlng: LatLng) => {
+      setClickedPosition(latlng);
       setIsLoading(true);
-      setClickedPosition(pos);
       setAssessment(null);
       try {
-        const result = await assessMapRisk({ latitude: pos.lat, longitude: pos.lng });
+        const result = await assessMapRisk({ latitude: latlng.lat, longitude: latlng.lng });
         setAssessment(result);
       } catch (e) {
         console.error("Risk assessment failed:", e);
         setAssessment({ riskPercentage: 0, analysis: "Could not assess risk. Please try again later." });
       }
       setIsLoading(false);
-    };
+  };
 
-    useEffect(() => {
-      if (!isLoading && assessment && markerRef.current) {
-        markerRef.current.openPopup();
-      }
-    }, [isLoading, assessment]);
-
-    useEffect(() => {
-      const onMapClick = (e: L.LeafletMouseEvent) => {
-        assessRisk(e.latlng);
-      };
-      map.on('click', onMapClick);
-      return () => {
-        map.off('click', onMapClick);
-      };
-    }, [map]);
-
-    return clickedPosition ? (
-      <Marker position={clickedPosition} ref={markerRef}>
-        <Popup>
-          <div className="w-64">
-            {isLoading ? (
-              <div className="flex items-center justify-center p-4">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : assessment ? (
-              <div className="space-y-2">
-                <h3 className="font-bold flex items-center gap-2">
-                  <RiskIcon risk={assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} className="h-5 w-5" />
-                   Risk Assessment
-                </h3>
-                <div className="text-center">
-                  <p className="text-3xl font-bold">{assessment.riskPercentage}%</p>
-                  <Badge variant={riskBadgeVariant(assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low')}>
-                    {assessment.riskPercentage > 60 ? 'High' : assessment.riskPercentage > 30 ? 'Medium' : 'Low'} Risk
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">{assessment.analysis}</p>
-              </div>
-            ) : (
-              <p>Click on the map to assess risk.</p>
-            )}
-          </div>
-        </Popup>
-      </Marker>
-    ) : null;
-}
-
-
-export default function InteractiveMap() {
-  const [currentTileLayer, setCurrentTileLayer] = useState<keyof typeof tileLayers>('default');
-  const [flyTo, setFlyTo] = useState<L.LatLng | null>(null);
-
-  const handleDistrictSelect = (center: [number, number]) => {
-    setFlyTo(L.latLng(center[0], center[1]));
+  const getRiskLevel = (percentage: number) => {
+    if (percentage > 60) return 'High';
+    if (percentage > 30) return 'Medium';
+    return 'Low';
   };
 
   return (
@@ -208,6 +230,12 @@ export default function InteractiveMap() {
                     key={currentTileLayer}
                   />
                   <MapController flyTo={flyTo} />
+                  <MapEvents 
+                    onMapClick={handleMapClick}
+                    clickedPosition={clickedPosition}
+                    isLoading={isLoading}
+                    assessment={assessment}
+                  />
                 </MapContainer>
             </div>
           </div>
@@ -217,23 +245,54 @@ export default function InteractiveMap() {
                 <CardTitle className="text-lg">Legend & Info</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">Risk levels are dynamically calculated by AI based on multiple factors.</p>
-                <ul className="space-y-3">
-                  {riskLevels.map(risk => (
-                    <li key={risk.level} className="flex items-center gap-3">
-                        <span className={`h-4 w-4 rounded-full ${risk.color}`}></span>
-                        <span className="font-medium text-sm">{risk.level} Risk</span>
-                    </li>
-                  ))}
-                </ul>
-                 <div className="mt-6 pt-6 border-t">
-                    <div className="flex items-start gap-3 text-primary">
-                        <Pin className="h-5 w-5 mt-1 shrink-0" />
-                        <p className="text-sm">
-                            Click anywhere on the map to pin a location and receive an instant landslide risk assessment for the next 7 days.
-                        </p>
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <p className="mt-2 text-sm">Assessing risk...</p>
                     </div>
-                </div>
+                ) : assessment ? (
+                    <div className="space-y-4 animate-fade-in-up">
+                        <h3 className="font-semibold text-center">Selected Point Analysis</h3>
+                        <div className="text-center">
+                            <p className="text-4xl font-bold">{assessment.riskPercentage}%</p>
+                            <Badge variant={riskBadgeVariant(getRiskLevel(assessment.riskPercentage))}>
+                                {getRiskLevel(assessment.riskPercentage)} Risk
+                            </Badge>
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium">Analysis:</p>
+                            <p className="text-sm text-muted-foreground">{assessment.analysis}</p>
+                        </div>
+                        {clickedPosition && (
+                            <div>
+                                <p className="text-sm font-medium">Coordinates:</p>
+                                <p className="text-sm text-muted-foreground">
+                                    {clickedPosition.lat.toFixed(4)}, {clickedPosition.lng.toFixed(4)}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div>
+                        <p className="text-sm text-muted-foreground mb-4">Risk levels are dynamically calculated by AI based on multiple factors.</p>
+                        <ul className="space-y-3">
+                            {riskLevels.map(risk => (
+                                <li key={risk.level} className="flex items-center gap-3">
+                                    <span className={`h-4 w-4 rounded-full ${risk.color}`}></span>
+                                    <span className="font-medium text-sm">{risk.level} Risk</span>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="mt-6 pt-6 border-t">
+                            <div className="flex items-start gap-3 text-primary">
+                                <Pin className="h-5 w-5 mt-1 shrink-0" />
+                                <p className="text-sm">
+                                    Click anywhere on the map to pin a location and receive an instant landslide risk assessment for the next 7 days.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
               </CardContent>
             </Card>
           </div>
