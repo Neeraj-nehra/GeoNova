@@ -1,5 +1,7 @@
-# Firebase Studio
+# GeoNova
 
-This is a NextJS starter in Firebase Studio.
+For running this app run command :-
+npm install         or   npm install --legacy-peer-deps
 
-To get started, take a look at src/app/page.tsx.
+         after that run thsis command
+npm run dev
