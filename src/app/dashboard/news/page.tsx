@@ -1,18 +1,23 @@
-import { PageHeader } from "@/components/layout/page-header";
-import { getLandslideNews } from "@/ai/flows/get-landslide-news";
-import { NewsArticleCard } from "@/components/news-article-card";
+export async function getLandslideNews() {
+  const API_KEY = process.env.92b46d120b3845a19566b5608dabf6ab; // Make sure this is set in Vercel env vars
+  const url = `https://newsapi.org/v2/everything?q=landslide&sortBy=publishedAt&language=en&pageSize=9&apiKey=${API_KEY}`;
 
-export default async function NewsPage() {
-  const newsData = await getLandslideNews();
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`News API error: ${res.status} ${res.statusText}`);
+  }
 
-  return (
-    <div className="animate-fade-in-up">
-      <PageHeader title="Landslide News" />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {newsData.articles.map((article, index) => (
-          <NewsArticleCard key={index} article={article} />
-        ))}
-      </div>
-    </div>
-  );
+  const data = await res.json();
+
+  // Map only the fields you need for your NewsArticleCard component
+  return {
+    articles: data.articles.map(({ title, description, url, urlToImage, publishedAt, source }) => ({
+      title,
+      description,
+      url,
+      image: urlToImage,
+      publishedAt,
+      source: source.name,
+    })),
+  };
 }
