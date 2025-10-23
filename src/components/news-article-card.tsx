@@ -69,9 +69,14 @@ export function NewsArticleCard({ article }: { article: NewsArticle }) {
         <ScrollArea className="h-[300px] pr-4">
             <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground">
                 <p className="font-semibold text-foreground">{article.summary}</p>
-                {article.body.split('\n\n').map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                ))}
+                {article.description && typeof article.description === 'string' ? (
+  article.description.split('\n\n').map((paragraph, index) => (
+    <p key={index}>{paragraph}</p>
+  ))
+) : (
+  <p>{article.summary}</p>
+)}
+
             </div>
         </ScrollArea>
       </DialogContent>
