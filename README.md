@@ -4,6 +4,10 @@ For running this app run command :-
 
        git clone https://github.com/Neeraj-nehra/GeoNova.git
 
+After that :-
+       
+       cd GeoNova
+
 after run:-
         
         npm install        
